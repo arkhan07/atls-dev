@@ -586,117 +586,65 @@
             </div>
         </div>
         
-        <!-- Gallery Tabs -->
-        <div class="gallery-tabs">
-            <button class="gallery-tab active" data-tab="training">Training Events</button>
-            <button class="gallery-tab" data-tab="conference">Medical Conference</button>
-            <button class="gallery-tab" data-tab="workshop">Workshop</button>
-            <button class="gallery-tab" data-tab="certification">Certification</button>
-        </div>
-        
-        <!-- Training Gallery -->
-        <div class="gallery-content active" id="training">
-            <div class="row g-4">
-                @php
-                $trainingImages = [
-                    ['url' => 'https://picsum.photos/seed/training1/800/600', 'title' => 'ATLS Basic Training'],
-                    ['url' => 'https://picsum.photos/seed/training2/800/600', 'title' => 'Hands-on Practice'],
-                    ['url' => 'https://picsum.photos/seed/training3/800/600', 'title' => 'Simulation Training'],
-                    ['url' => 'https://picsum.photos/seed/training4/800/600', 'title' => 'Emergency Response'],
-                    ['url' => 'https://picsum.photos/seed/training5/800/600', 'title' => 'Team Coordination'],
-                    ['url' => 'https://picsum.photos/seed/training6/800/600', 'title' => 'Medical Equipment Training']
-                ];
+        @if(isset($galleries) && count($galleries) > 0)
+            <!-- Gallery Tabs -->
+            <div class="gallery-tabs">
+                @php 
+                    $isFirst = true;
+                    $categoryMap = [
+                        'hotel' => 'Training Events',
+                        'restaurant' => 'Medical Conference',
+                        'beauty' => 'Workshop',
+                        'doctor' => 'Certification',
+                        'car' => 'Automotive',
+                        'real-estate' => 'Real Estate',
+                        'event' => 'Events',
+                        'other' => 'Other'
+                    ];
                 @endphp
                 
-                @foreach($trainingImages as $image)
-                <div class="col-lg-4 col-md-6">
-                    <div class="gallery-item">
-                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}">
-                        <div class="gallery-overlay">{{ $image['title'] }}</div>
-                    </div>
-                </div>
+                @foreach($galleryCategories as $key => $category)
+                    @if(isset($galleries[$key]) && count($galleries[$key]) > 0)
+                        <button class="gallery-tab {{ $isFirst ? 'active' : '' }}" data-tab="{{ $key }}">
+                            {{ $categoryMap[$key] ?? $category }}
+                        </button>
+                        @php $isFirst = false; @endphp
+                    @endif
                 @endforeach
             </div>
-        </div>
-        
-        <!-- Conference Gallery -->
-        <div class="gallery-content" id="conference">
-            <div class="row g-4">
-                @php
-                $conferenceImages = [
-                    ['url' => 'https://picsum.photos/seed/conference1/800/600', 'title' => 'Annual Medical Conference'],
-                    ['url' => 'https://picsum.photos/seed/conference2/800/600', 'title' => 'Expert Speakers'],
-                    ['url' => 'https://picsum.photos/seed/conference3/800/600', 'title' => 'Conference Hall'],
-                    ['url' => 'https://picsum.photos/seed/conference4/800/600', 'title' => 'Networking Session'],
-                    ['url' => 'https://picsum.photos/seed/conference5/800/600', 'title' => 'Panel Discussion'],
-                    ['url' => 'https://picsum.photos/seed/conference6/800/600', 'title' => 'Medical Symposium']
-                ];
-                @endphp
-                
-                @foreach($conferenceImages as $image)
-                <div class="col-lg-4 col-md-6">
-                    <div class="gallery-item">
-                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}">
-                        <div class="gallery-overlay">{{ $image['title'] }}</div>
+            
+            @php $isFirstContent = true; @endphp
+            @foreach($galleryCategories as $key => $category)
+                @if(isset($galleries[$key]) && count($galleries[$key]) > 0)
+                    <!-- {{ $category }} Gallery -->
+                    <div class="gallery-content {{ $isFirstContent ? 'active' : '' }}" id="{{ $key }}">
+                        <div class="row g-4">
+                            @foreach($galleries[$key]->take(6) as $gallery)
+                            <div class="col-lg-4 col-md-6">
+                                <div class="gallery-item">
+                                    <img src="{{ asset('uploads/gallery/' . $gallery->image) }}" 
+                                         alt="{{ $gallery->title }}"
+                                         onerror="this.src='{{ asset('assets/frontend/images/placeholder.jpg') }}'">
+                                    <div class="gallery-overlay">{{ $gallery->title }}</div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-                @endforeach
+                    @php $isFirstContent = false; @endphp
+                @endif
+            @endforeach
+            
+            <div class="text-end mt-4">
+                <a href="{{ route('frontend.gallery') }}" class="btn btn-danger">See More</a>
             </div>
-        </div>
-        
-        <!-- Workshop Gallery -->
-        <div class="gallery-content" id="workshop">
-            <div class="row g-4">
-                @php
-                $workshopImages = [
-                    ['url' => 'https://picsum.photos/seed/workshop1/800/600', 'title' => 'Interactive Workshop'],
-                    ['url' => 'https://picsum.photos/seed/workshop2/800/600', 'title' => 'Skill Development'],
-                    ['url' => 'https://picsum.photos/seed/workshop3/800/600', 'title' => 'Group Practice'],
-                    ['url' => 'https://picsum.photos/seed/workshop4/800/600', 'title' => 'Clinical Skills'],
-                    ['url' => 'https://picsum.photos/seed/workshop5/800/600', 'title' => 'Medical Procedures'],
-                    ['url' => 'https://picsum.photos/seed/workshop6/800/600', 'title' => 'Practical Session']
-                ];
-                @endphp
-                
-                @foreach($workshopImages as $image)
-                <div class="col-lg-4 col-md-6">
-                    <div class="gallery-item">
-                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}">
-                        <div class="gallery-overlay">{{ $image['title'] }}</div>
-                    </div>
-                </div>
-                @endforeach
+        @else
+            <!-- Fallback when no galleries exist -->
+            <div class="alert alert-info text-center">
+                <i class="fi-rr-info-circle me-2"></i>
+                {{ get_phrase('No gallery items available at the moment.') }}
             </div>
-        </div>
-        
-        <!-- Certification Gallery -->
-        <div class="gallery-content" id="certification">
-            <div class="row g-4">
-                @php
-                $certificationImages = [
-                    ['url' => 'https://picsum.photos/seed/cert1/800/600', 'title' => 'Certificate Awarding'],
-                    ['url' => 'https://picsum.photos/seed/cert2/800/600', 'title' => 'Graduation Ceremony'],
-                    ['url' => 'https://picsum.photos/seed/cert3/800/600', 'title' => 'Achievement Recognition'],
-                    ['url' => 'https://picsum.photos/seed/cert4/800/600', 'title' => 'Professional Certification'],
-                    ['url' => 'https://picsum.photos/seed/cert5/800/600', 'title' => 'Success Celebration'],
-                    ['url' => 'https://picsum.photos/seed/cert6/800/600', 'title' => 'Medical License']
-                ];
-                @endphp
-                
-                @foreach($certificationImages as $image)
-                <div class="col-lg-4 col-md-6">
-                    <div class="gallery-item">
-                        <img src="{{ $image['url'] }}" alt="{{ $image['title'] }}">
-                        <div class="gallery-overlay">{{ $image['title'] }}</div>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        
-        <div class="text-end mt-4">
-            <a href="#" class="btn btn-danger">See More</a>
-        </div>
+        @endif
     </div>
 </section>
 

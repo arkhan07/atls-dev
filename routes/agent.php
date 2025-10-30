@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ListingController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Agent\AgentController;
+use App\Http\Controllers\Agent\PackageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -62,6 +63,15 @@ Route::controller(AgentController::class)->middleware('auth', 'agent')->group(fu
     Route::post('/agent/blog/update/{id}', [BlogController::class, 'blog_update'])->name('agent.blog.update');
     Route::get('/agent/blog/delete/{id}', [BlogController::class, 'user_blog_delete'])->name('agent.blog.delete');
 
+    // Package ATLS Management Routes
+    Route::get('/agent/packages', [PackageController::class, 'index'])->name('agent.packages.index');
+    Route::get('/agent/packages/create', [PackageController::class, 'create'])->name('agent.packages.create');
+    Route::post('/agent/packages/store', [PackageController::class, 'store'])->name('agent.packages.store');
+    Route::get('/agent/packages/{id}/edit', [PackageController::class, 'edit'])->name('agent.packages.edit');
+    Route::post('/agent/packages/{id}/update', [PackageController::class, 'update'])->name('agent.packages.update');
+    Route::post('/agent/packages/{id}/toggle-status', [PackageController::class, 'toggleStatus'])->name('agent.packages.toggle-status');
+    Route::delete('/agent/packages/{id}/delete', [PackageController::class, 'destroy'])->name('agent.packages.destroy');
+    Route::get('/agent/packages/{id}/registrations', [PackageController::class, 'registrations'])->name('agent.packages.registrations');
 
    
 

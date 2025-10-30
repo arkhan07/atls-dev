@@ -265,9 +265,18 @@ class RegionController extends Controller
     public function publicShow($slug)
     {
         try {
-            $region = Region::with('page')->where('slug', $slug)->where('is_active', true)->firstOrFail();
+            $region = Region::with(['page', 'activePackages.user'])
+                ->where('slug', $slug)
+                ->where('is_active', true)
+                ->firstOrFail();
             
-            return view('frontend.region-detail', compact('region'));
+            // Get active packages for this region
+            $packages = $region->activePackages()
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            
+            return view('frontend.region-detail', compact('region', 'packages'));
             
         } catch (\Exception $e) {
             abort(404, 'Region not found');

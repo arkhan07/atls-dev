@@ -159,6 +159,25 @@
                                         </span>
                                     </a>
                                 </li>
+
+                            {{-- Package ATLS Management --}}
+                            <li class="sidebar-nav-item"><a href="{{ route('agent.packages.index') }}" class="sidebar-nav-link {{ $active == 'packages' ? 'active' : '' }}">
+                                    <span class="d-flex align-items-start mt-1px gap-6px">
+                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M15.8101 6.43503V11.565C15.8101 12.405 15.3601 13.185 14.6326 13.6125L10.1776 16.185C9.45012 16.605 8.55012 16.605 7.81512 16.185L3.36012 13.6125C2.63262 13.1925 2.18262 12.4125 2.18262 11.565V6.43503C2.18262 5.59503 2.63262 4.81499 3.36012 4.38749L7.81512 1.815C8.54262 1.395 9.44262 1.395 10.1776 1.815L14.6326 4.38749C15.3601 4.81499 15.8101 5.58753 15.8101 6.43503Z" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M9 8.25C9.9665 8.25 10.75 7.4665 10.75 6.5C10.75 5.5335 9.9665 4.75 9 4.75C8.0335 4.75 7.25 5.5335 7.25 6.5C7.25 7.4665 8.0335 8.25 9 8.25Z" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                            <path d="M12 12.5C12 11.1193 10.6569 10 9 10C7.34315 10 6 11.1193 6 12.5" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        <span class="mt-1px">{{ get_phrase('My Packages') }}</span>
+                                    </span>
+                                    <span class="badge-secondary mt-1px">
+                                        @php
+                                            $myPackages = App\Models\Package::where('user_id', user('id'))->count();
+                                        @endphp
+                                        {{ $myPackages }}
+                                    </span>
+                                </a>
+                            </li>
                           
                             {{-- Shop Addon --}}
                             @if (addon_status('shop') == 1)

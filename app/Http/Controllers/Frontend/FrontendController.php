@@ -63,6 +63,14 @@ class FrontendController extends Controller
          
          // Team members for homepage slider
          $page_data['teamMembers'] = TeamMember::active()->ordered()->get();
+         
+         // Gallery items grouped by category for homepage
+         $page_data['galleryCategories'] = \App\Models\Gallery::getCategories();
+         $page_data['galleries'] = \App\Models\Gallery::active()
+                                    ->orderBy('sort_order', 'asc')
+                                    ->orderBy('created_at', 'desc')
+                                    ->get()
+                                    ->groupBy('category');
         // New
         return view('frontend.index',$page_data);
     }

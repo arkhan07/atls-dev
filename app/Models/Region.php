@@ -35,6 +35,17 @@ class Region extends Model
         return $this->hasOne(RegionPage::class);
     }
 
+    // Relationship with packages
+    public function packages()
+    {
+        return $this->hasMany(Package::class);
+    }
+
+    public function activePackages()
+    {
+        return $this->hasMany(Package::class)->where('status', 'active');
+    }
+
     // Accessors for URLs
     public function getIconImageUrlAttribute()
     {

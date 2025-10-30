@@ -13,6 +13,7 @@ class Package extends Model
 
     protected $fillable = [
         'user_id',
+        'region_id',
         'title',
         'date_range',
         'days',
@@ -43,6 +44,11 @@ class Package extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
     }
 
     public function registrations(): HasMany
@@ -86,5 +92,10 @@ class Package extends Model
     public function scopeByAgent($query, $agentId)
     {
         return $query->where('user_id', $agentId);
+    }
+
+    public function scopeByRegion($query, $regionId)
+    {
+        return $query->where('region_id', $regionId);
     }
 }

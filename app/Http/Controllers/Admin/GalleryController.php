@@ -7,7 +7,7 @@ use App\Models\Gallery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Image;
+use Intervention\Image\Facades\Image;
 
 class GalleryController extends Controller
 {
@@ -278,5 +278,69 @@ class GalleryController extends Controller
             'success' => true,
             'message' => get_phrase('Sort order updated successfully')
         ]);
+    }
+
+    public function bulkStatusUpdate(Request $request)
+    {
+        $ids = $request->ids;
+        $status = $request->status;
+        
+        if (!empty($ids) && in_array($status, ['active', 'inactive'])) {
+            Gallery::whereIn('id', $ids)->update(['status' => $status]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => get_phrase('Status updated successfully')
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => get_phrase('Invalid request')
+        ], 400);
+    }
+
+    // =====================================================
+    // GALLERY CATEGORY MANAGEMENT METHODS
+    // =====================================================
+    
+    public function manageCategories()
+    {
+        $categories = Gallery::getCategories();
+        
+        return view('admin.gallery.categories', compact('categories'));
+    }
+
+    public function storeCategory(Request $request)
+    {
+        $request->validate([
+            'key' => 'required|string|max:100|unique:gallery_categories,key',
+            'name' => 'required|string|max:255',
+        ]);
+
+        // Note: For now, categories are hardcoded in the model
+        // If you need dynamic categories, you'll need to create a gallery_categories table
+        // and modify the Gallery::getCategories() method
+        
+        return redirect()->back()
+                        ->with('warning', get_phrase('Categories are currently managed in the code. Contact developer for custom categories.'));
+    }
+
+    public function updateCategory(Request $request, $id)
+    {
+        // Categories are currently hardcoded
+        // This is a placeholder for future dynamic category management
+        
+        return redirect()->back()
+                        ->with('warning', get_phrase('Categories are currently managed in the code. Contact developer for custom categories.'));
+    }
+
+    public function destroyCategory($id)
+    {
+        // Categories are currently hardcoded
+        // This is a placeholder for future dynamic category management
+        
+        return redirect()->back()
+                        ->with('warning', get_phrase('Categories are currently managed in the code. Contact developer for custom categories.'));
     }
 }
