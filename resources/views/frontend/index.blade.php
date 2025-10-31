@@ -76,9 +76,6 @@
     .region-icon {
         width: 70px;
         height: 70px;
-        margin: 0 auto 20px;
-        background: #9f2325;
-        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;

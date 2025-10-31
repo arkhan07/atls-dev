@@ -54,7 +54,7 @@
                                            rel="noopener noreferrer"
                                            class="btn btn-whatsapp">
                                             <i class="fab fa-whatsapp me-2"></i>
-                                            Hubungi via WhatsApp
+                                            WhatsApp
                                         </a>
                                     @else
                                         <div class="no-whatsapp-info">
@@ -89,14 +89,14 @@
 <style>
 /* Region Section */
 .region-section {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fa 100%);
     position: relative;
     overflow: hidden;
 }
 
 .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 400;
     color: #2c3e50;
     margin-bottom: 1rem;
     position: relative;
@@ -183,8 +183,8 @@
 }
 
 .region-name {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 400;
     color: #2c3e50;
     margin-bottom: 20px;
 }
@@ -200,7 +200,7 @@
     width: 100%;
     padding: 12px 20px;
     border-radius: 10px;
-    font-weight: 600;
+    font-weight: 400;
     text-decoration: none;
     transition: all 0.3s ease;
     display: flex;

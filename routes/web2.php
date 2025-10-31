@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ListingController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\PricingController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Updater;
 use App\Http\Controllers\InstallController;
 use App\Models\Room;
+use App\Models\Region;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 
@@ -55,10 +57,11 @@ Route::get('/listing-review/edit/{id}', [FrontendController::class, 'ListingRevi
 Route::post('/listing/reviews/updated/{id}', [FrontendController::class, 'ListingOwnReviewsUpdated'])->name('listing.reviews.updated');
 Route::get('/listing/reviews/delete/{id}', [FrontendController::class, 'ListingOwnReviewsDelete'])->name('listing.review.delete');
 
-// Public routes
-Route::get('/wilayah-detail/{region:slug}', function (Region $region) {
-return view('frontend.region-detail', compact('region'));})->name('region.detail');
+// Public Region Routes
+Route::get('/wilayah-detail/{region:slug}', [RegionController::class, 'publicShow'])->name('region.detail');
 
+// Frontend Gallery Routes
+Route::get('/gallery', [FrontendController::class, 'gallery'])->name('frontend.gallery');
 
 // Page 
 Route::get('/privacy-policy', [FrontendController::class, 'privacy_policy'])->name('privacy-policy');
@@ -82,14 +85,11 @@ Route::any('/customer/message', [FrontendController::class, 'customerMessage'])-
 // Appoinment
 Route::post('/customer/bookAppointment', [FrontendController::class, 'customerBookAppointment'])->name('customerBookAppointment');
 
-
 // Beauty Filter
 Route::get('/listings-filter', [FrontendController::class, 'ListingsFilter'])->name('ListingsFilter');
 
-
 // Newsletter Subscriber  Frontend
 Route::post('newsletter/subscribe', [FrontendController::class, 'newslater_subscribe'])->name('newsletter.subscribe');
-
 
  // Claim Listing 
  Route::post('claim-listing/store', [FrontendController::class, 'claimListingStore'])->name('claimListingStore');
@@ -100,6 +100,17 @@ Route::post('newsletter/subscribe', [FrontendController::class, 'newslater_subsc
  Route::get('report-listing/form-show/{type}/{id}', [FrontendController::class, 'reportListingForm'])->name('reportListingForm');
  Route::post('report-listing/store', [FrontendController::class, 'reportListingStore'])->name('reportListingStore');
 
+// =====================================================
+// PUBLIC PRICING PACKAGES ROUTES (Customer View)
+// =====================================================
+Route::prefix('pricing-packages')->name('packages.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Frontend\PackageController::class, 'index'])->name('index');
+    Route::get('/{id}/{slug}', [App\Http\Controllers\Frontend\PackageController::class, 'show'])->name('show');
+    Route::get('/category/{category}', [App\Http\Controllers\Frontend\PackageController::class, 'category'])->name('category');
+    Route::get('/agent/{agent_id}', [App\Http\Controllers\Frontend\PackageController::class, 'byAgent'])->name('by_agent');
+    Route::get('/search', [App\Http\Controllers\Frontend\PackageController::class, 'search'])->name('search');
+    Route::post('/filter', [App\Http\Controllers\Frontend\PackageController::class, 'filter'])->name('filter');
+});
 
 Route::get('/customer/account', [AgentController::class, 'agent_account'])->name('user.account');
 Route::post('/account/update', [AgentController::class, 'customerAccountUpdate'])->name('customerAccountUpdate');
@@ -159,12 +170,224 @@ Route::prefix('{prefix}')->middleware(['auth', 'anyAuth'])->group(function () {
 
 });
 
+// =====================================================
+// AGENT ROUTES (UPDATED WITH PRICING FUNCTIONALITY)
+// =====================================================
+Route::prefix('agent')->middleware(['auth', 'IsAgent'])->name('agent.')->group(function () {
+    
+    // =====================================================
+    // EXISTING AGENT ROUTES
+    // =====================================================
+    Route::get('/dashboard', [AgentController::class, 'dashboard'])->name('dashboard');
+    Route::get('/account', [AgentController::class, 'agent_account'])->name('account');
+    Route::get('/my_listings', [AgentController::class, 'my_listings'])->name('my_listings');
+    
+    // Agent Appointments
+    Route::prefix('appointment')->name('appointment.')->group(function () {
+        Route::get('/', [AgentController::class, 'appointments'])->name('index');
+        Route::get('/{id}/details', [AgentController::class, 'appointment_details'])->name('view_details');
+    });
+    
+    // Agent Blogs
+    Route::prefix('blogs')->name('blogs.')->group(function () {
+        Route::get('/', [AgentController::class, 'blogs'])->name('index');
+        Route::get('/create', [AgentController::class, 'blog_create'])->name('create');
+        Route::post('/', [AgentController::class, 'blog_store'])->name('store');
+        Route::get('/{id}/edit', [AgentController::class, 'blog_edit'])->name('edit');
+        Route::put('/{id}', [AgentController::class, 'blog_update'])->name('update');
+        Route::delete('/{id}', [AgentController::class, 'blog_destroy'])->name('destroy');
+    });
+    
+    // Agent Listings
+    Route::prefix('listing')->name('listing.')->group(function () {
+        Route::get('/add', [AgentController::class, 'listing_add'])->name('add');
+        Route::get('/add-form/{type}', [AgentController::class, 'listing_add_form'])->name('add_listing_form');
+        Route::post('/store/{type}', [AgentController::class, 'listing_store'])->name('store');
+        Route::get('/{type}/{id}/edit', [AgentController::class, 'listing_edit'])->name('edit');
+        Route::put('/{type}/{id}', [AgentController::class, 'listing_update'])->name('update');
+        Route::delete('/{type}/{id}', [AgentController::class, 'listing_delete'])->name('delete');
+        Route::get('/script', [AgentController::class, 'listing_script'])->name('script');
+    });
+    
+    // Agent Subscriptions
+    Route::prefix('subscription')->name('subscription.')->group(function () {
+        Route::get('/', [AgentController::class, 'subscription'])->name('index');
+        Route::get('/billing', [AgentController::class, 'billing_info'])->name('modify_billing_information');
+        Route::post('/update-billing', [AgentController::class, 'update_billing'])->name('update_billing');
+        Route::get('/invoice/{id}', [AgentController::class, 'invoice'])->name('subscription_invoice');
+        Route::get('/style', [AgentController::class, 'subscription_style'])->name('style');
+    });
+
+    // =====================================================
+    // NEW: AGENT PRICING ROUTES
+    // =====================================================
+    Route::prefix('pricing')->name('pricing.')->group(function () {
+        // Main CRUD Routes
+        Route::get('/', [App\Http\Controllers\Agent\PricingController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Agent\PricingController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Agent\PricingController::class, 'store'])->name('store');
+        Route::get('/{id}', [App\Http\Controllers\Agent\PricingController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [App\Http\Controllers\Agent\PricingController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [App\Http\Controllers\Agent\PricingController::class, 'update'])->name('update');
+        Route::delete('/{id}', [App\Http\Controllers\Agent\PricingController::class, 'destroy'])->name('destroy');
+        
+        // Additional Actions
+        Route::patch('/{id}/toggle-status', [App\Http\Controllers\Agent\PricingController::class, 'toggleStatus'])->name('toggle-status');
+        Route::get('/{id}/duplicate', [App\Http\Controllers\Agent\PricingController::class, 'duplicate'])->name('duplicate');
+        Route::get('/{id}/registrations', [App\Http\Controllers\Agent\PricingController::class, 'registrations'])->name('registrations');
+        Route::patch('/registrations/{registration_id}/approve', [App\Http\Controllers\Agent\PricingController::class, 'approveRegistration'])->name('registrations.approve');
+        Route::patch('/registrations/{registration_id}/reject', [App\Http\Controllers\Agent\PricingController::class, 'rejectRegistration'])->name('registrations.reject');
+        
+        // Export Routes
+        Route::get('/export/csv', [App\Http\Controllers\Agent\PricingController::class, 'exportCsv'])->name('export.csv');
+        Route::get('/export/pdf', [App\Http\Controllers\Agent\PricingController::class, 'exportPdf'])->name('export.pdf');
+        Route::get('/export/participants/{package_id}', [App\Http\Controllers\Agent\PricingController::class, 'exportParticipants'])->name('export.participants');
+        
+        // Reports
+        Route::get('/reports/revenue', [App\Http\Controllers\Agent\PricingController::class, 'revenueReport'])->name('reports.revenue');
+        Route::get('/reports/registrations', [App\Http\Controllers\Agent\PricingController::class, 'registrationReport'])->name('reports.registrations');
+    });
+
+    // =====================================================
+    // AGENT REGISTRATION MANAGEMENT
+    // =====================================================
+    Route::prefix('registrations')->name('registrations.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Agent\RegistrationController::class, 'index'])->name('index');
+        Route::get('/{id}', [App\Http\Controllers\Agent\RegistrationController::class, 'show'])->name('show');
+        Route::patch('/{id}/status', [App\Http\Controllers\Agent\RegistrationController::class, 'updateStatus'])->name('update_status');
+        Route::post('/{id}/send-confirmation', [App\Http\Controllers\Agent\RegistrationController::class, 'sendConfirmation'])->name('send_confirmation');
+        Route::get('/{id}/certificate', [App\Http\Controllers\Agent\RegistrationController::class, 'generateCertificate'])->name('certificate');
+    });
+});
+
+// =====================================================
+// CUSTOMER PRICING ROUTES (Requires Authentication)
+// =====================================================
+Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(function () {
+    
+    // Existing Customer Routes
+    Route::get('/wishlist', [App\Http\Controllers\Customer\CustomerController::class, 'wishlist'])->name('wishlist');
+    Route::get('/following-agent', [App\Http\Controllers\Customer\CustomerController::class, 'following_agent'])->name('following_agent');
+    Route::get('/become-an-agent', [App\Http\Controllers\Customer\CustomerController::class, 'become_an_agent'])->name('become_an_agent');
+    
+    // Customer Appointments
+    Route::prefix('appointment')->name('appointment.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Customer\CustomerController::class, 'appointments'])->name('index');
+    });
+    
+    // NEW: Customer Package Registration
+    Route::prefix('packages')->name('packages.')->group(function () {
+        Route::post('/{id}/register', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'register'])->name('register');
+        Route::get('/registration/{id}/payment', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'payment'])->name('payment');
+        Route::post('/registration/{id}/upload-proof', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'uploadProof'])->name('upload_proof');
+        Route::get('/my-registrations', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'myRegistrations'])->name('my_registrations');
+        Route::get('/registration/{id}/certificate', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'certificate'])->name('certificate');
+        Route::get('/registration/{id}/invoice', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'invoice'])->name('invoice');
+    });
+});
+
+// =====================================================
+// ADMIN ROUTES (EXISTING - NO CHANGES)
+// =====================================================
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard'); 
 
     // Admin Product Update
     Route::post('admin/product/update', [Updater::class, 'update'])->name('admin.product.update'); 
+
+    // ====================================
+    // REGIONAL MANAGEMENT - UPDATED SECTION
+    // ====================================
+    
+    // Region Management Routes
+    Route::resource('regions', RegionController::class, [
+        'names' => [
+            'index' => 'admin.regions.index',
+            'create' => 'admin.regions.create',
+            'store' => 'admin.regions.store',
+            'show' => 'admin.regions.show',
+            'edit' => 'admin.regions.edit',
+            'update' => 'admin.regions.update',
+            'destroy' => 'admin.regions.destroy'
+        ]
+    ]);
+    
+    // Additional Region Routes
+    Route::prefix('regions')->name('admin.regions.')->group(function () {
+        // Toggle Status
+        Route::post('{region}/toggle-status', [RegionController::class, 'toggleStatus'])->name('toggle-status');
+        
+        // Preview Region Page
+        Route::get('{region}/preview', [RegionController::class, 'preview'])->name('preview');
+        
+        // Bulk Actions
+        Route::post('bulk-delete', [RegionController::class, 'bulkDelete'])->name('bulk-delete');
+        Route::post('bulk-activate', [RegionController::class, 'bulkActivate'])->name('bulk-activate');
+        Route::post('bulk-deactivate', [RegionController::class, 'bulkDeactivate'])->name('bulk-deactivate');
+        
+        // Export/Import
+        Route::get('export', [RegionController::class, 'export'])->name('export');
+        Route::post('import', [RegionController::class, 'import'])->name('import');
+        
+        // Statistics
+        Route::get('statistics', [RegionController::class, 'statistics'])->name('statistics');
+        
+        // Region Pages Management
+        Route::get('{region}/page/edit', [RegionController::class, 'editPage'])->name('page.edit');
+        Route::post('{region}/page/update', [RegionController::class, 'updatePage'])->name('page.update');
+        
+        // Duplicate Region
+        Route::post('{region}/duplicate', [RegionController::class, 'duplicate'])->name('duplicate');
+        
+        // Region Members (for future use)
+        Route::get('{region}/members', [RegionController::class, 'members'])->name('members');
+        Route::post('{region}/members/assign', [RegionController::class, 'assignMember'])->name('members.assign');
+        Route::delete('{region}/members/{user}', [RegionController::class, 'removeMember'])->name('members.remove');
+    });
+
+    // ====================================
+    // END REGIONAL MANAGEMENT SECTION
+    // ====================================
+
+    // ====================================
+    // GALLERY MANAGEMENT SECTION
+    // ====================================
+    
+    // Gallery Management Routes
+    Route::prefix('gallery')->name('admin.gallery.')->group(function () {
+        Route::get('/', [GalleryController::class, 'index'])->name('index');
+        Route::get('/create', [GalleryController::class, 'create'])->name('create');
+        Route::post('/', [GalleryController::class, 'store'])->name('store');
+        Route::get('/{gallery}', [GalleryController::class, 'show'])->name('show');
+        Route::get('/{gallery}/edit', [GalleryController::class, 'edit'])->name('edit');
+        Route::put('/{gallery}', [GalleryController::class, 'update'])->name('update');
+        Route::delete('/{gallery}', [GalleryController::class, 'destroy'])->name('destroy');
+        
+        // Additional Gallery Actions
+        Route::get('/{id}/status/{status}', [GalleryController::class, 'updateStatus'])->name('status');
+        Route::post('/{gallery}/toggle-featured', [GalleryController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/bulk-delete', [GalleryController::class, 'bulkDelete'])->name('bulk-delete');
+        Route::post('/bulk-status-update', [GalleryController::class, 'bulkStatusUpdate'])->name('bulk-status-update');
+        Route::post('/update-sort-order', [GalleryController::class, 'updateSortOrder'])->name('update-sort-order');
+        
+        // Gallery Categories Management
+        Route::get('/categories/manage', [GalleryController::class, 'manageCategories'])->name('categories.manage');
+        Route::post('/categories/store', [GalleryController::class, 'storeCategory'])->name('categories.store');
+        Route::put('/categories/{id}', [GalleryController::class, 'updateCategory'])->name('categories.update');
+        Route::delete('/categories/{id}', [GalleryController::class, 'destroyCategory'])->name('categories.destroy');
+        
+        // Gallery Export/Import
+        Route::get('/export/csv', [GalleryController::class, 'exportCsv'])->name('export.csv');
+        Route::post('/import/csv', [GalleryController::class, 'importCsv'])->name('import.csv');
+        
+        // Gallery Statistics
+        Route::get('/statistics/overview', [GalleryController::class, 'statistics'])->name('statistics');
+    });
+
+    // ====================================
+    // END GALLERY MANAGEMENT SECTION
+    // ====================================
 
     // category route
     Route::get('/categories/{type}', [CategoryController::class, 'index'])->name('admin.categories');
@@ -202,11 +425,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::delete('/team/{team}', [TeamController::class, 'destroy'])->name('admin.team.destroy');
     Route::get('/team/{team}/status/{status}', [TeamController::class, 'updateStatus'])->name('admin.team.status');
     Route::get('/team-api/subcategories', [TeamController::class, 'getSubcategories'])->name('admin.team.subcategories');
-    
-    // Admin routes
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('regions', [RegionController::class, 'index'])->name('regions.index');
-    });
 
     // blogs route
     Route::get('blogs/{type}', [BlogController::class, 'index'])->name('admin.blogs');
@@ -382,11 +600,74 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 
 });
 
-Route::prefix('user')->middleware(['auth'])->group(function () {
+// =====================================================
+// API ROUTES FOR AJAX CALLS
+// =====================================================
+Route::prefix('api')->name('api.')->group(function () {
+    
+    // Admin API Routes
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+        Route::get('regions/search', [RegionController::class, 'search'])->name('regions.search');
+        Route::get('regions/{region}/stats', [RegionController::class, 'stats'])->name('regions.stats');
+        Route::post('regions/reorder', [RegionController::class, 'reorder'])->name('regions.reorder');
+        
+        // Gallery API Routes
+        Route::prefix('gallery')->name('gallery.')->group(function () {
+            Route::get('search', [GalleryController::class, 'apiSearch'])->name('search');
+            Route::get('{gallery}/stats', [GalleryController::class, 'apiStats'])->name('stats');
+            Route::post('reorder', [GalleryController::class, 'apiReorder'])->name('reorder');
+            Route::post('bulk-action', [GalleryController::class, 'apiBulkAction'])->name('bulk-action');
+        });
+    });
+    
+    // Agent API Routes
+    Route::prefix('agent')->name('agent.')->middleware(['auth', 'IsAgent'])->group(function () {
+        // Package API
+        Route::prefix('pricing')->name('pricing.')->group(function () {
+            Route::get('search', [App\Http\Controllers\Agent\PricingController::class, 'apiSearch'])->name('search');
+            Route::get('{id}/stats', [App\Http\Controllers\Agent\PricingController::class, 'apiStats'])->name('stats');
+            Route::post('bulk-action', [App\Http\Controllers\Agent\PricingController::class, 'apiBulkAction'])->name('bulk_action');
+            Route::get('dashboard-stats', [App\Http\Controllers\Agent\PricingController::class, 'dashboardStats'])->name('dashboard_stats');
+        });
+        
+        // Registration API
+        Route::prefix('registrations')->name('registrations.')->group(function () {
+            Route::get('search', [App\Http\Controllers\Agent\RegistrationController::class, 'apiSearch'])->name('search');
+            Route::post('{id}/quick-update', [App\Http\Controllers\Agent\RegistrationController::class, 'quickUpdate'])->name('quick_update');
+        });
+    });
 
+    // Public API Routes
+    Route::prefix('packages')->name('packages.')->group(function () {
+        Route::get('search', [App\Http\Controllers\Frontend\PackageController::class, 'apiSearch'])->name('search');
+        Route::get('{id}/details', [App\Http\Controllers\Frontend\PackageController::class, 'apiDetails'])->name('details');
+        Route::get('categories', [App\Http\Controllers\Frontend\PackageController::class, 'apiCategories'])->name('categories');
+    });
 });
 
+// =====================================================
+// MESSAGE ROUTES (EXISTING)
+// =====================================================
+Route::prefix('user')->middleware(['auth'])->group(function () {
+    Route::prefix('message')->name('user.message.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Customer\CustomerController::class, 'messages'])->name('index');
+    });
+});
 
+// =====================================================
+// WEBHOOK & PAYMENT CALLBACK ROUTES
+// =====================================================
+Route::prefix('webhook')->name('webhook.')->group(function () {
+    // Payment Gateway Webhooks for package registrations
+    Route::post('paypal/package', [App\Http\Controllers\PaymentController::class, 'paypalPackageWebhook'])->name('paypal.package');
+    Route::post('stripe/package', [App\Http\Controllers\PaymentController::class, 'stripePackageWebhook'])->name('stripe.package');
+    Route::post('midtrans/package', [App\Http\Controllers\PaymentController::class, 'midtransPackageWebhook'])->name('midtrans.package');
+    Route::post('razorpay/package', [App\Http\Controllers\PaymentController::class, 'razorpayPackageWebhook'])->name('razorpay.package');
+});
+
+// =====================================================
+// UTILITY ROUTES (EXISTING)
+// =====================================================
 Route::get('/clear-cache', function () {
     Artisan::call('cache:clear');
     Artisan::call('config:clear');
@@ -401,14 +682,15 @@ Route::get('/storage-link', function () {
     return 'storage linked successfully';
 });
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//Installation routes
+// =====================================================
+// INSTALLATION ROUTES (EXISTING)
+// =====================================================
 Route::controller(InstallController::class)->middleware('CheckDatabaseConnection')->group(function () {
     Route::get('/install_ended', 'index')->name('install');
     Route::get('install/step0', 'step0')->name('step0');
@@ -427,7 +709,9 @@ Route::controller(InstallController::class)->group(function () {
     Route::get('install/success', 'success')->name('success');
 });
 
-// WhatsApp OTP Authentication Routes (untuk guest)
+// =====================================================
+// WHATSAPP OTP AUTHENTICATION ROUTES (EXISTING)
+// =====================================================
 use App\Http\Controllers\Auth\OtpController;
 
 Route::middleware('guest')->group(function () {

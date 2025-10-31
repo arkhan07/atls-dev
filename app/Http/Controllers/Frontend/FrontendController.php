@@ -840,8 +840,19 @@ class FrontendController extends Controller
         return Region::active()->ordered()->get();
     }
 
-
-
- 
+    // Region Detail Page with Packages
+    public function region_detail(Region $region)
+    {
+        // Get packages/pricing data for this region
+        // Removed status check as the column doesn't exist in pricings table
+        $packages = Pricing::orderBy('created_at', 'desc')->get();
+        
+        // Alternative: If you have specific columns to filter, use those instead:
+        // $packages = Pricing::where('is_active', 1)->orderBy('created_at', 'desc')->get();
+        // Or if you have region_id:
+        // $packages = Pricing::where('region_id', $region->id)->orderBy('created_at', 'desc')->get();
+        
+        return view('frontend.region-detail', compact('region', 'packages'));
+    }
 
 }

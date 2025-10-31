@@ -1,224 +1,327 @@
-@extends('layouts.app')
+@extends('layouts.frontend')
+@push('title', $region->meta_title ?: $region->name)
+@push('meta')
+    @if($region->meta_description)
+        <meta name="description" content="{{ $region->meta_description }}">
+    @endif
+@endpush
 
-@section('title', $region->meta_title ?: $region->name)
-@section('meta_description', $region->meta_description)
-
-@section('content')
+@push('css')
+<!-- Font Awesome 6 (versi terbaru) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-    .pricing-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid #e5e7eb;
+    /* Pricing Card Style - Similar to pricing.blade.php */
+    .at-shadow-card {
+        background: #fff;
         border-radius: 12px;
-        overflow: hidden;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
-    .pricing-card:hover {
+    
+    .at-shadow-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     }
-    .pricing-image {
-        height: 200px;
-        object-fit: cover;
-        width: 100%;
+    
+    .at-shadow-card.active {
+        background: #a02526;
+        color: white;
     }
-    .pricing-price {
-        font-size: 2rem;
-        font-weight: bold;
+    
+    .sml-radio-iconbox {
+        width: 60px;
+        height: 60px;
+        background: rgba(37, 99, 235, 0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .at-shadow-card.active .sml-radio-iconbox {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .icon-color {
         color: #2563eb;
     }
-    .pricing-badge {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: rgba(37, 99, 235, 0.9);
+    
+    .at-shadow-card.active .icon-color {
         color: white;
-        padding: 5px 15px;
+    }
+    
+    .at-border-bottom {
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .at-shadow-card.active .at-border-bottom {
+        border-bottom-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .at-check-listitem {
+        position: relative;
+        padding-left: 28px;
+        margin-bottom: 8px;
+    }
+    
+    .at-check-listitem:before {
+        position: absolute;
+        left: 0;
+        color: #10b981;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    
+    .at-shadow-card.active .at-check-listitem:before {
+        color: white;
+    }
+    
+    .theme-btn1 {
+        background: #2563eb;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .theme-btn1:hover {
+        background: #1d4ed8;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .at-btn-white {
+        background: white;
+        color: #2563eb;
+        padding: 12px 24px;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+    
+    .at-btn-white:hover {
+        background: #f3f4f6;
+        color: #2563eb;
+    }
+    
+    .quota-badge {
+        display: inline-block;
+        background: #10b981;
+        color: white;
+        padding: 4px 12px;
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 600;
     }
-    .quota-progress {
-        height: 8px;
+    
+    .at-shadow-card.active .quota-badge {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .region-banner-img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
         border-radius: 10px;
     }
-    .whatsapp-btn {
-        background: #25D366;
-        color: white;
-        border: none;
-        transition: all 0.3s ease;
+    
+    .region-info-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
     }
-    .whatsapp-btn:hover {
-        background: #128C7E;
-        color: white;
-        transform: scale(1.05);
+    
+    .sidebar-card {
+        background: white;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        position: sticky;
+        top: 20px;
+    }
+    
+    .stats-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .stats-item:last-child {
+        border-bottom: none;
     }
 </style>
+@endpush
 
-<div class="container py-5">
-    @if($region->banner_image)
-        <div class="region-banner mb-4">
-            <img src="{{ $region->banner_image_url }}" 
-                 alt="{{ $region->name }}" 
-                 class="img-fluid w-100 rounded"
-                 style="max-height: 400px; object-fit: cover;">
-        </div>
-    @endif
+@section('frontend_layout')
+<!-- Start Page Content -->
+<section class="mt-5 mb-5">
+    <div class="container">
+        <!-- Banner -->
+        @if($region->banner_image)
+            <div class="row mb-4">
+                <div class="col-12">
+                    <img src="{{ $region->banner_image_url }}" 
+                         alt="{{ $region->name }}" 
+                         class="region-banner-img">
+                </div>
+            </div>
+        @endif
 
-    <div class="row">
-        <div class="col-md-8">
-            @if($region->page && $region->page->content)
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Region Info -->
+                <div class="region-info-card">
+                    @if($region->page && $region->page->content)
                         {!! $region->page->content !!}
-                    </div>
-                </div>
-            @else
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h1>{{ $region->name }}</h1>
+                    @else
+                        <h1 class="mb-3">{{ $region->name }}</h1>
                         <p class="lead">Selamat datang di wilayah {{ $region->name }}.</p>
-                    </div>
+                    @endif
                 </div>
-            @endif
 
-            <!-- Packages Section -->
-            @if($packages && $packages->count() > 0)
-                <div class="mt-5">
-                    <h2 class="mb-4">Paket ATLS Tersedia di {{ $region->name }}</h2>
-                    <div class="row g-4">
-                        @foreach($packages as $package)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="card pricing-card h-100">
-                                <div class="position-relative">
-                                    @if($package->image)
-                                        <img src="{{ asset('uploads/packages/' . $package->image) }}" 
-                                             class="pricing-image" 
-                                             alt="{{ $package->title }}">
-                                    @else
-                                        <div class="pricing-image bg-gradient d-flex align-items-center justify-content-center" 
-                                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                            <i class="fas fa-box-open fa-4x text-white opacity-50"></i>
-                                        </div>
-                                    @endif
-                                    <div class="pricing-badge">
-                                        <i class="fas fa-users"></i> {{ $package->remaining_quota }} Tersisa
-                                    </div>
-                                </div>
-
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title mb-3">{{ $package->title }}</h5>
-                                    
-                                    <ul class="list-unstyled small text-muted mb-3 flex-grow-1">
-                                        <li class="mb-2">
-                                            <i class="fas fa-calendar-alt text-primary me-2"></i>
-                                            {{ $package->date_range }}
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="fas fa-clock text-primary me-2"></i>
-                                            {{ $package->days }} - {{ $package->time }}
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="fas fa-map-marker-alt text-primary me-2"></i>
-                                            {{ $package->location }}
-                                            @if($package->maps_link)
-                                                <a href="{{ $package->maps_link }}" target="_blank" class="text-decoration-none ms-1">
-                                                    <i class="fas fa-external-link-alt"></i>
-                                                </a>
+                <!-- Packages Section -->
+                @if($packages && $packages->count() > 0)
+                    <div class="mt-4">
+                        <h1 class="in-title-3 mb-32 mt-2">{{ get_phrase('Paket ATLS Tersedia di') }} {{ $region->name }}</h1>
+                        <div class="row row-28 mb-90 justify-content-start">
+                            @foreach($packages as $key => $package)
+                            <div class="col-lg-6 col-md-6">
+                                <div class="at-shadow-card eShadow {{ $key == 0 ? 'active' : '' }}">
+                                    <div class="d-flex flex-column h-100 justify-content-between">
+                                        <div>
+                                            <!-- Icon -->
+                                            <div class="sml-radio-iconbox mb-3">
+                                                <i class="fa-solid fa-ticket"></i>
+                                            </div>
+                                            
+                                            <!-- Title -->
+                                            <h4 class="in-title-4 mb-1 {{ $key == 0 ? 'text-white' : '' }}">{{ $package->title }}</h4>
+                                            
+                                            <!-- Quota Badge -->
+                                            <span class="quota-badge mb-3 d-inline-block">
+                                                <i class="fas fa-users"></i> {{ $package->remaining_quota }}/{{ $package->quota }} {{ get_phrase('Slot Available') }}
+                                            </span>
+                                            
+                                            <!-- Price -->
+                                            <div class="d-flex align-items-center pb-3 mb-3 at-border-bottom">
+                                                <h1 class="in-title-1 {{ $key == 0 ? 'text-white' : '' }}">{{ $package->formatted_price }}</h1>
+                                                <p class="in-subtitle-1 fw-medium {{ $key == 0 ? 'text-white' : '' }}">/ {{ get_phrase('participant') }}</p>
+                                            </div>
+                                            
+                                            <!-- Package Details -->
+                                            <ul class="d-flex flex-column gap-12px mb-4">
+                                                <li class="at-check-listitem {{ $key == 0 ? 'text-white' : '' }}">
+                                                    <i class="fas fa-calendar me-2"></i>{{ $package->date_range }}
+                                                </li>
+                                                <li class="at-check-listitem {{ $key == 0 ? 'text-white' : '' }}">
+                                                    <i class="fas fa-clock me-2"></i>{{ $package->days }} - {{ $package->time }}
+                                                </li>
+                                                <li class="at-check-listitem {{ $key == 0 ? 'text-white' : '' }}">
+                                                    <i class="fas fa-map-marker-alt me-2"></i>{{ $package->location }}
+                                                </li>
+                                                <li class="at-check-listitem {{ $key == 0 ? 'text-white' : '' }}">
+                                                    <i class="fas fa-user-tie me-2"></i>{{ $package->contact_name }} - {{ $package->contact_phone }}
+                                                </li>
+                                            </ul>
+                                            
+                                            <!-- Registration Progress -->
+                                            @if($package->registration_percentage > 0)
+                                            <div class="mb-3">
+                                                <div class="progress" style="height: 6px;">
+                                                    <div class="progress-bar {{ $package->registration_percentage >= 80 ? 'bg-danger' : 'bg-success' }}" 
+                                                         style="width: {{ $package->registration_percentage }}%"></div>
+                                                </div>
+                                                <small class="{{ $key == 0 ? 'text-white' : 'text-muted' }}">
+                                                    {{ $package->registration_count }} {{ get_phrase('registered') }} ({{ number_format($package->registration_percentage, 0) }}%)
+                                                </small>
+                                            </div>
                                             @endif
-                                        </li>
-                                        <li class="mb-2">
-                                            <i class="fas fa-user-tie text-primary me-2"></i>
-                                            {{ $package->user->name ?? 'Agent' }}
-                                        </li>
-                                    </ul>
-
-                                    <!-- Quota Progress -->
-                                    <div class="mb-3">
-                                        <div class="d-flex justify-content-between small text-muted mb-1">
-                                            <span>{{ $package->registration_count }}/{{ $package->quota }} Terdaftar</span>
-                                            <span>{{ number_format($package->registration_percentage, 0) }}%</span>
                                         </div>
-                                        <div class="progress quota-progress">
-                                            <div class="progress-bar {{ $package->registration_percentage >= 80 ? 'bg-danger' : 'bg-success' }}" 
-                                                 style="width: {{ $package->registration_percentage }}%"></div>
+                                        
+                                        <!-- Action Button -->
+                                        <div class="mt-3">
+                                            @if($package->remaining_quota > 0)
+                                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $package->contact_phone) }}?text=Halo, saya ingin mendaftar paket {{ urlencode($package->title) }} di {{ $region->name }}" 
+                                                   target="_blank"
+                                                   class="{{ $key == 0 ? 'btn at-btn-white' : 'theme-btn1' }} w-100 text-center">
+                                                    <i class="fab fa-whatsapp me-2"></i>{{ get_phrase('Daftar Sekarang') }}
+                                                </a>
+                                            @else
+                                                <button class="btn btn-secondary w-100" disabled>
+                                                    <i class="fas fa-times-circle me-2"></i>{{ get_phrase('Quota Full') }}
+                                                </button>
+                                            @endif
                                         </div>
                                     </div>
-
-                                    <!-- Price -->
-                                    <div class="text-center mb-3">
-                                        <div class="pricing-price">{{ $package->formatted_price }}</div>
-                                        <small class="text-muted">per peserta</small>
-                                    </div>
-
-                                    <!-- Daftar Button -->
-                                    @if($package->remaining_quota > 0)
-                                        <a href="https://wa.me/{{ $package->user->phone ?? $package->contact_phone }}?text=Halo, saya ingin mendaftar untuk paket {{ urlencode($package->title) }} di {{ $region->name }}" 
-                                           target="_blank" 
-                                           class="btn whatsapp-btn w-100 btn-lg">
-                                            <i class="fab fa-whatsapp me-2"></i>Daftar Sekarang
-                                        </a>
-                                    @else
-                                        <button class="btn btn-secondary w-100 btn-lg" disabled>
-                                            <i class="fas fa-times-circle me-2"></i>Kuota Penuh
-                                        </button>
-                                    @endif
                                 </div>
-
-                                @if($package->description)
-                                    <div class="card-footer bg-light">
-                                        <small class="text-muted">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            {{ Str::limit($package->description, 100) }}
-                                        </small>
-                                    </div>
-                                @endif
                             </div>
+                            @endforeach
                         </div>
-                        @endforeach
                     </div>
-                </div>
-            @else
-                <div class="alert alert-info mt-4">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Belum ada paket ATLS yang tersedia untuk wilayah {{ $region->name }} saat ini.
-                </div>
-            @endif
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-body text-center">
+                @else
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {{ get_phrase('Belum ada paket ATLS yang tersedia untuk wilayah') }} {{ $region->name }} {{ get_phrase('saat ini.') }}
+                    </div>
+                @endif
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar-card">
                     @if($region->icon_image)
-                        <img src="{{ $region->icon_image_url }}" 
-                             alt="{{ $region->name }}" 
-                             class="img-fluid mb-3"
-                             style="max-height: 100px;">
+                        <div class="text-center mb-3">
+                            <img src="{{ $region->icon_image_url }}" 
+                                 alt="{{ $region->name }}" 
+                                 class="img-fluid"
+                                 style="max-height: 100px;">
+                        </div>
                     @endif
                     
-                    <h5 class="mb-3">{{ $region->name }}</h5>
+                    <h5 class="text-center mb-3">{{ $region->name }}</h5>
                     
                     <a href="{{ $region->whatsapp_link }}" 
-                       class="btn btn-success btn-lg w-100"
+                       class="btn btn-success btn-lg w-100 mb-4"
                        target="_blank">
-                        <i class="fab fa-whatsapp me-2"></i> Hubungi WhatsApp
+                        <i class="fab fa-whatsapp me-2"></i> {{ get_phrase('Hubungi WhatsApp') }}
                     </a>
 
                     @if($packages && $packages->count() > 0)
                         <hr class="my-4">
-                        <div class="text-start">
-                            <h6 class="text-muted mb-3">Statistik Paket</h6>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Total Paket:</span>
-                                <strong>{{ $packages->count() }}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Paket Tersedia:</span>
-                                <strong class="text-success">{{ $packages->where('remaining_quota', '>', 0)->count() }}</strong>
-                            </div>
+                        <h6 class="text-muted mb-3">{{ get_phrase('Statistik Paket') }}</h6>
+                        <div class="stats-item">
+                            <span class="text-muted">{{ get_phrase('Total Paket:') }}</span>
+                            <strong>{{ $packages->count() }}</strong>
+                        </div>
+                        <div class="stats-item">
+                            <span class="text-muted">{{ get_phrase('Paket Tersedia:') }}</span>
+                            <strong class="text-success">{{ $packages->count() }}</strong>
                         </div>
                     @endif
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+<!-- End Page Content -->
+
 @endsection
+
+@push('js')
+<script>
+    'use strict';
+    // Add any custom JavaScript here if needed
+</script>
+@endpush
