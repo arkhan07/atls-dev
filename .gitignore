@@ -30,3 +30,5 @@ yarn-error.log
 # Environment files
 *.env
 *.env.*
+atlsindonesia_db.sql
+public/assets/install.sql
