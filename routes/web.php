@@ -253,14 +253,13 @@ Route::prefix('agent')->middleware(['auth', 'IsAgent'])->name('agent.')->group(f
     });
 
     // =====================================================
-    // AGENT REGISTRATION MANAGEMENT
+    // AGENT REGISTRATION MANAGEMENT (ATLS Registrations)
     // =====================================================
     Route::prefix('registrations')->name('registrations.')->group(function () {
         Route::get('/', [App\Http\Controllers\Agent\RegistrationController::class, 'index'])->name('index');
+        Route::get('/export', [App\Http\Controllers\Agent\RegistrationController::class, 'export'])->name('export');
         Route::get('/{id}', [App\Http\Controllers\Agent\RegistrationController::class, 'show'])->name('show');
-        Route::patch('/{id}/status', [App\Http\Controllers\Agent\RegistrationController::class, 'updateStatus'])->name('update_status');
-        Route::post('/{id}/send-confirmation', [App\Http\Controllers\Agent\RegistrationController::class, 'sendConfirmation'])->name('send_confirmation');
-        Route::get('/{id}/certificate', [App\Http\Controllers\Agent\RegistrationController::class, 'generateCertificate'])->name('certificate');
+        Route::post('/{id}/payment-status', [App\Http\Controllers\Agent\RegistrationController::class, 'updatePaymentStatus'])->name('update_payment_status');
     });
 });
 
