@@ -103,7 +103,7 @@ class RegistrationController extends Controller
             
             // Redirect to user's registration list or detail
             if (Auth::check()) {
-                return redirect()->route('user.registrations.index');
+                return redirect()->route('customer.registrations.index');
             }
             
             return redirect()->route('home');
