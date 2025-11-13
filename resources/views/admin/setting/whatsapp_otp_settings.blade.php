@@ -1,16 +1,20 @@
 {{-- resources/views/admin/setting/whatsapp_otp_settings.blade.php --}}
 @extends('layouts.admin')
-@push('title', get_phrase('WhatsApp OTP Settings'))
+@section('title', get_phrase('WhatsApp OTP Settings'))
+@section('admin_layout')
 
-@section('page_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
-    <div class="d-flex align-items-center">
-        <h3 class="page-title">{{ get_phrase('WhatsApp OTP Settings') }}</h3>
+<div class="ol-card radius-8px">
+    <div class="ol-card-body my-2 py-12px px-20px">
+        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap flex-md-nowrap">
+            <h4 class="title fs-16px">
+                <i class="fi-rr-settings me-2"></i>
+                {{ get_phrase('WhatsApp OTP Settings') }}
+            </h4>
+        </div>
     </div>
 </div>
-@endsection
 
-@section('content')
+<div class="row mt-3">
 <div class="row">
     <div class="col-12 grid-margin stretch-card">
         <div class="card">
