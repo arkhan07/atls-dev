@@ -434,14 +434,14 @@
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
                 <div class="stats-card">
-                    <div class="stats-number">378</div>
+                    <div class="stats-number">397</div>
                     <h6 class="text-muted">Instructor</h6>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stats-card">
-                    <div class="stats-number">521</div>
-                    <h6 class="text-muted">Projects</h6>
+                    <div class="stats-number">MA & CLA</div>
+                    <h6 class="text-muted"> Lisence Sub Divisi 25</h6>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
@@ -452,7 +452,7 @@
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="stats-card">
-                    <div class="stats-number">23</div>
+                    <div class="stats-number">25</div>
                     <h6 class="text-muted">Sub Division</h6>
                 </div>
             </div>
@@ -530,48 +530,6 @@
     </div>
 </section>
 
-<!-- Trusted Companies Section -->
-<section class="mt-5 pt-4">
-    <div class="container">
-        <div class="row mb-5">
-            <div class="col-12">
-                <h1 class="in-title-36px text-center text-capitalize max-w-538px mx-auto">
-                    We Have Worked with <span class="text-danger">10,000+</span> Trusted Companies
-                </h1>
-            </div>
-        </div>
-        <div class="row mb-5">
-            <div class="col-12">
-                <ul class="trusted-companies-wrap">
-                    <li>
-                        <img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft">
-                    </li>
-                    <li>
-                        <img src="https://logo.clearbit.com/google.com" alt="Google">
-                    </li>
-                    <li>
-                        <img src="https://logo.clearbit.com/apple.com" alt="Apple">
-                    </li>
-                    <li>
-                        <img src="https://logo.clearbit.com/amazon.com" alt="Amazon">
-                    </li>
-                    <li>
-                        <img src="https://logo.clearbit.com/ibm.com" alt="IBM">
-                    </li>
-                    <li>
-                        <img src="https://logo.clearbit.com/oracle.com" alt="Oracle">
-                    </li>
-                    <li>
-                        <img src="https://logo.clearbit.com/salesforce.com" alt="Salesforce">
-                    </li>
-                    <li>
-                        <img src="https://logo.clearbit.com/cisco.com" alt="Cisco">
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Gallery Section -->
 <section class="py-5">

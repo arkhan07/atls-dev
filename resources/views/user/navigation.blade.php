@@ -118,47 +118,11 @@
             </div>
             @if (check_subscription(user('id')))
                 <div class="mb-3">
-                    <h3 class="in-title-14px mb-2 cap-sidebar-title">{{ get_phrase('My Agent Panel') }}</h3>
+                    <h3 class="in-title-14px mb-2 cap-sidebar-title">{{ get_phrase('Member Wilayah ATLS') }}</h3>
                     <nav>
                         <ul>
-                            <li class="sidebar-nav-item"><a href="{{ route('agent.my_listings') }}" class="sidebar-nav-link {{ $active == 'agent_listing' ? 'active' : '' }}">
-                                    <span class="d-flex align-items-start mt-1px gap-6px">
-                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M16.5 7.5V11.25C16.5 15 15 16.5 11.25 16.5H6.75C3 16.5 1.5 15 1.5 11.25V6.75C1.5 3 3 1.5 6.75 1.5H10.5" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M16.5 7.5H13.5C11.25 7.5 10.5 6.75 10.5 4.5V1.5L16.5 7.5Z" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M5.25 9.75H9.75" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M5.25 12.75H8.25" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        <span class="mt-1px">{{ get_phrase('My Listing') }}</span>
-                                    </span>
-                                </a></li>
 
-                            <li class="sidebar-nav-item"><a href="{{ route('agent.add.listing') }}" class="sidebar-nav-link {{ $active == 'add_listing' ? 'active' : '' }}">
-                                    <span class="d-flex align-items-start mt-1px gap-6px">
-                                        <svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="14" height="14">
-                                            <path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z" />
-                                        </svg>
-                                        <span class="mt-1px">{{ get_phrase('Add Event') }}</span>
-                                    </span>
-                                </a></li>
-                               
-                                <li class="sidebar-nav-item"><a href="{{ route('agent.appointment') }}" class="sidebar-nav-link {{ $active == 'appointment' ? 'active' : '' }}">
-                                        <span class="d-flex align-items-start mt-1px gap-6px">
-                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M6.98242 11.025L8.10742 12.15L11.1074 9.15002" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M7.5 4.5H10.5C12 4.5 12 3.75 12 3C12 1.5 11.25 1.5 10.5 1.5H7.5C6.75 1.5 6 1.5 6 3C6 4.5 6.75 4.5 7.5 4.5Z" stroke="#99A1B7" stroke-width="1.4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M12 3.01501C14.4975 3.15001 15.75 4.07251 15.75 7.50001V12C15.75 15 15 16.5 11.25 16.5H6.75C3 16.5 2.25 15 2.25 12V7.50001C2.25 4.08001 3.5025 3.15001 6 3.01501" stroke="#99A1B7" stroke-width="1.4" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                            <span class="mt-1px">{{ get_phrase('Order Event') }}</span>
-                                        </span>
-                                        <span class="badge-secondary mt-1px">
-                                            @php
-                                                $appoints = App\Models\Appointment::where('agent_id', user('id'))->get();
-                                            @endphp
-                                            {{ count($appoints) }}
-                                        </span>
-                                    </a>
-                                </li>
+
 
                             {{-- Package ATLS Management --}}
                             <li class="sidebar-nav-item"><a href="{{ route('agent.packages.index') }}" class="sidebar-nav-link {{ $active == 'packages' ? 'active' : '' }}">
@@ -224,19 +188,7 @@
                                         <span class="mt-1px">{{ get_phrase('Blog') }}</span>
                                     </span>
                                 </a></li>
-                            <li class="sidebar-nav-item"><a href="{{ route('user.subscription') }}" class="sidebar-nav-link {{ $active == 'subscription' ? 'active' : '' }}">
-                                    <span class="d-flex align-items-start mt-1px gap-6px">
-                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M6.50391 10.7474C6.50391 11.7149 7.24641 12.4949 8.16891 12.4949H10.0514C10.8539 12.4949 11.5064 11.8124 11.5064 10.9724C11.5064 10.0574 11.1089 9.73488 10.5164 9.52488L7.49391 8.47488C6.90141 8.26488 6.50391 7.94238 6.50391 7.02738C6.50391 6.18738 7.15641 5.50488 7.95891 5.50488H9.84141C10.7639 5.50488 11.5064 6.28488 11.5064 7.25238" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M9 4.5V13.5" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M11.25 16.5H6.75C3 16.5 1.5 15 1.5 11.25V6.75C1.5 3 3 1.5 6.75 1.5H11.25C15 1.5 16.5 3 16.5 6.75V11.25C16.5 15 15 16.5 11.25 16.5Z" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        <span class="mt-1px">{{ get_phrase('Subscription') }}</span>
-                                    </span>
-                                </a></li>
-                        </ul>
-                    </nav>
-                </div>
+            </div>
             @endif
             <div class="d-flex justify-content-center">
                 <a href="{{ route('logout') }}" class="btn cap-btn-primary w-100">
