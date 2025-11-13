@@ -187,4 +187,40 @@ class RegistrationController extends Controller
         
         return view('user.registrations.show', $page_data);
     }
+
+    /**
+     * Upload payment proof
+     */
+    public function uploadPaymentProof(Request $request, $id)
+    {
+        $registration = ATLsRegistration::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $request->validate([
+            'payment_proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120', // 5MB
+        ]);
+
+        try {
+            // Delete old payment proof if exists
+            if ($registration->payment_proof && file_exists(storage_path('app/public/' . $registration->payment_proof))) {
+                unlink(storage_path('app/public/' . $registration->payment_proof));
+            }
+
+            // Store new payment proof
+            $path = $request->file('payment_proof')->store('registrations/payment-proofs', 'public');
+            
+            $registration->update([
+                'payment_proof' => $path,
+                'payment_status' => 'pending', // Waiting for verification
+            ]);
+
+            Toastr::success('Bukti transfer berhasil diupload. Menunggu verifikasi admin.', 'Sukses');
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            Toastr::error('Gagal upload bukti transfer: ' . $e->getMessage(), 'Error');
+            return redirect()->back();
+        }
+    }
 }
