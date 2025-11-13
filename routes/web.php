@@ -60,6 +60,10 @@ Route::get('/listing/reviews/delete/{id}', [FrontendController::class, 'ListingO
 // Public Region Routes
 Route::get('/wilayah-detail/{region:slug}', [RegionController::class, 'publicShow'])->name('region.detail');
 
+// Package Registration Routes
+Route::get('/register-package/{package}', [\App\Http\Controllers\RegistrationController::class, 'create'])->name('registration.create');
+Route::post('/register-package/{package}', [\App\Http\Controllers\RegistrationController::class, 'store'])->name('registration.store');
+
 // Frontend Gallery Routes
 Route::get('/gallery', [FrontendController::class, 'gallery'])->name('frontend.gallery');
 
