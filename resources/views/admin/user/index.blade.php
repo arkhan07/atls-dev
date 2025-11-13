@@ -21,7 +21,7 @@
     <div class="ol-card mt-3">
         <div class="ol-card-body p-3">
             @if (count($users))
-                <table id="datatable" class="table  nowrap w-100">
+                <table class="table table-striped nowrap w-100">
                     <thead>
                         <tr>
                             <th> {{ get_phrase('ID') }} </th>
@@ -33,7 +33,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $num = 1 @endphp
+                        @php $num = ($users->currentPage() - 1) * $users->perPage() + 1 @endphp
                         @foreach ($users as $user)
                             <tr>
                                 <td> {{ $num++ }} </td>
