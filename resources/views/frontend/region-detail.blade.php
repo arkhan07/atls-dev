@@ -253,10 +253,9 @@
                                         <!-- Action Button -->
                                         <div class="mt-3">
                                             @if($package->remaining_quota > 0)
-                                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $package->contact_phone) }}?text=Halo, saya ingin mendaftar paket {{ urlencode($package->title) }} di {{ $region->name }}" 
-                                                   target="_blank"
+                                                <a href="{{ route('registration.create', $package->id) }}" 
                                                    class="{{ $key == 0 ? 'btn at-btn-white' : 'theme-btn1' }} w-100 text-center">
-                                                    <i class="fab fa-whatsapp me-2"></i>{{ get_phrase('Daftar Sekarang') }}
+                                                    <i class="fas fa-edit me-2"></i>{{ get_phrase('Daftar Sekarang') }}
                                                 </a>
                                             @else
                                                 <button class="btn btn-secondary w-100" disabled>
