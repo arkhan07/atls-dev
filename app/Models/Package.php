@@ -56,6 +56,11 @@ class Package extends Model
         return $this->hasMany(Registration::class);
     }
 
+    public function atlsRegistrations(): HasMany
+    {
+        return $this->hasMany(ATLsRegistration::class);
+    }
+
     // Accessors
     public function getFormattedPriceAttribute()
     {
