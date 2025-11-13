@@ -177,7 +177,7 @@ Route::prefix('{prefix}')->middleware(['auth', 'anyAuth'])->group(function () {
 // =====================================================
 // AGENT ROUTES (UPDATED WITH PRICING FUNCTIONALITY)
 // =====================================================
-Route::prefix('agent')->middleware(['auth', 'IsAgent'])->name('agent.')->group(function () {
+Route::prefix('agent')->middleware(['auth', 'agent'])->name('agent.')->group(function () {
     
     // =====================================================
     // EXISTING AGENT ROUTES
