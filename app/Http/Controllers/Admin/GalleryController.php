@@ -306,7 +306,9 @@ class GalleryController extends Controller
     
     public function manageCategories()
     {
-        $categories = Gallery::getCategories();
+        $categories = \App\Models\GalleryCategory::orderBy('sort_order', 'asc')
+            ->orderBy('name', 'asc')
+            ->paginate(20);
         
         return view('admin.gallery.categories', compact('categories'));
     }
@@ -314,33 +316,75 @@ class GalleryController extends Controller
     public function storeCategory(Request $request)
     {
         $request->validate([
-            'key' => 'required|string|max:100|unique:gallery_categories,key',
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:100',
+            'slug' => 'nullable|string|max:100|unique:gallery_categories,slug',
+            'description' => 'nullable|string|max:500',
+            'icon' => 'nullable|string|max:50',
+            'sort_order' => 'nullable|integer|min:0',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        // Note: For now, categories are hardcoded in the model
-        // If you need dynamic categories, you'll need to create a gallery_categories table
-        // and modify the Gallery::getCategories() method
+        $category = new \App\Models\GalleryCategory();
+        $category->name = $request->name;
+        $category->slug = $request->slug ?: \Str::slug($request->name);
+        $category->description = $request->description;
+        $category->icon = $request->icon;
+        $category->sort_order = $request->sort_order ?? 0;
+        $category->status = $request->status;
+        $category->save();
         
         return redirect()->back()
-                        ->with('warning', get_phrase('Categories are currently managed in the code. Contact developer for custom categories.'));
+                        ->with('success', get_phrase('Category created successfully'));
     }
 
     public function updateCategory(Request $request, $id)
     {
-        // Categories are currently hardcoded
-        // This is a placeholder for future dynamic category management
+        $category = \App\Models\GalleryCategory::findOrFail($id);
+        
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'slug' => 'nullable|string|max:100|unique:gallery_categories,slug,' . $id,
+            'description' => 'nullable|string|max:500',
+            'icon' => 'nullable|string|max:50',
+            'sort_order' => 'nullable|integer|min:0',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $category->name = $request->name;
+        if ($request->filled('slug')) {
+            $category->slug = $request->slug;
+        }
+        $category->description = $request->description;
+        $category->icon = $request->icon;
+        $category->sort_order = $request->sort_order ?? 0;
+        $category->status = $request->status;
+        $category->save();
         
         return redirect()->back()
-                        ->with('warning', get_phrase('Categories are currently managed in the code. Contact developer for custom categories.'));
+                        ->with('success', get_phrase('Category updated successfully'));
     }
 
     public function destroyCategory($id)
     {
-        // Categories are currently hardcoded
-        // This is a placeholder for future dynamic category management
-        
-        return redirect()->back()
-                        ->with('warning', get_phrase('Categories are currently managed in the code. Contact developer for custom categories.'));
+        try {
+            $category = \App\Models\GalleryCategory::findOrFail($id);
+            
+            // Check if category is being used
+            $galleryCount = Gallery::where('category', $category->slug)->count();
+            
+            if ($galleryCount > 0) {
+                return redirect()->back()
+                    ->with('error', get_phrase('Cannot delete category. It is being used by ' . $galleryCount . ' gallery items.'));
+            }
+            
+            $category->delete();
+            
+            return redirect()->back()
+                            ->with('success', get_phrase('Category deleted successfully'));
+                            
+        } catch (\Exception $e) {
+            return redirect()->back()
+                            ->with('error', 'Error deleting category: ' . $e->getMessage());
+        }
     }
 }
