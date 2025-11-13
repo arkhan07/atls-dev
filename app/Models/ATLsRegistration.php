@@ -116,4 +116,24 @@ class ATLsRegistration extends Model
     {
         return $query->where('package_id', $packageId);
     }
+
+    // Accessor for certificate file URL
+    public function getCertificateFileUrlAttribute()
+    {
+        if ($this->certificate_file) {
+            if (file_exists(storage_path('app/public/' . $this->certificate_file))) {
+                return asset('storage/' . $this->certificate_file);
+            }
+        }
+        return null;
+    }
+
+    // Calculate age from birth_date
+    public function getCalculatedAgeAttribute()
+    {
+        if ($this->birth_date) {
+            return $this->birth_date->age;
+        }
+        return $this->age;
+    }
 }
