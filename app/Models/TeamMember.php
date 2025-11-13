@@ -113,4 +113,25 @@ class TeamMember extends Model
     {
         return ['facebook', 'twitter', 'instagram', 'linkedin'];
     }
+
+    // Accessor for image URL with fallback
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            // Check if it's a full URL
+            if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+                return $this->image;
+            }
+            // Check if file exists in storage
+            if (file_exists(public_path('uploads/teams/' . $this->image))) {
+                return asset('uploads/teams/' . $this->image);
+            }
+            // Try storage path
+            if (file_exists(storage_path('app/public/teams/' . $this->image))) {
+                return asset('storage/teams/' . $this->image);
+            }
+        }
+        // Fallback to placeholder based on gender or default
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&size=200&background=a02526&color=fff';
+    }
 }
