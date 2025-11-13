@@ -60,6 +60,21 @@ class Gallery extends Model
     // Categories static method
     public static function getCategories()
     {
+        // Try to get from database first
+        try {
+            $categories = \App\Models\GalleryCategory::active()
+                ->orderBy('sort_order', 'asc')
+                ->pluck('name', 'slug')
+                ->toArray();
+            
+            if (!empty($categories)) {
+                return $categories;
+            }
+        } catch (\Exception $e) {
+            // If table doesn't exist yet, return default
+        }
+        
+        // Fallback to default categories
         return [
             'hotel' => 'Hotel',
             'restaurant' => 'Restaurant', 
@@ -70,5 +85,11 @@ class Gallery extends Model
             'event' => 'Event',
             'other' => 'Other'
         ];
+    }
+    
+    // Relationship
+    public function categoryModel()
+    {
+        return $this->belongsTo(\App\Models\GalleryCategory::class, 'category', 'slug');
     }
 }
