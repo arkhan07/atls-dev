@@ -55,8 +55,8 @@
             </li>
 
             <!-- Gallery -->
-            <li class="sidebar-first-li {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}">
-                <a href="{{ route('admin.gallery.index') }}">
+            <li class="sidebar-first-li first-li-have-sub">
+                <a href="javascript:void(0);">
                     <span><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13.3333 18.9584H6.66667C3.625 18.9584 1.875 17.2084 1.875 14.1667V5.83341C1.875 2.79175 3.625 1.04175 6.66667 1.04175H13.3333C16.375 1.04175 18.125 2.79175 18.125 5.83341V14.1667C18.125 17.2084 16.375 18.9584 13.3333 18.9584ZM6.66667 2.29175C4.28333 2.29175 3.125 3.45008 3.125 5.83341V14.1667C3.125 16.5501 4.28333 17.7084 6.66667 17.7084H13.3333C15.7167 17.7084 16.875 16.5501 16.875 14.1667V5.83341C16.875 3.45008 15.7167 2.29175 13.3333 2.29175H6.66667Z" fill="#99A1B7"/>
                         <path d="M5.41602 16.0417C5.20768 16.0417 5.00768 15.9667 4.84935 15.8001C4.68268 15.6334 4.60768 15.4167 4.64102 15.1917L5.20768 11.8834L3.19935 9.95008C3.04935 9.80841 2.98268 9.59175 3.02435 9.38341C3.06602 9.17508 3.21602 9.00008 3.41602 8.92508L6.59935 7.53341L8.14102 4.74175C8.24935 4.54175 8.44935 4.41675 8.66602 4.41675C8.88268 4.41675 9.08268 4.54175 9.19102 4.74175L10.7327 7.53341L13.916 8.92508C14.116 9.00008 14.266 9.17508 14.3077 9.38341C14.3493 9.59175 14.2827 9.80841 14.1327 9.95008L12.1243 11.8834L12.691 15.1917C12.7243 15.4167 12.6493 15.6334 12.4827 15.8001C12.316 15.9667 12.1077 16.0417 11.891 16.0001L8.66602 14.6584L5.44102 16.0001C5.43268 16.0417 5.42435 16.0417 5.41602 16.0417ZM8.66602 13.3334C8.74102 13.3334 8.81602 13.3584 8.88268 13.4001L11.466 14.4751L11.0077 11.8251C10.9827 11.6001 11.0577 11.3751 11.216 11.2084L12.7993 9.70841L10.2243 8.58341C10.016 8.49175 9.85768 8.31675 9.78268 8.10008L8.66602 5.91675L7.54935 8.10008C7.47435 8.31675 7.31602 8.49175 7.10768 8.58341L4.53268 9.70841L6.116 11.2084C6.27435 11.3751 6.34935 11.6001 6.32435 11.8251L5.86602 14.4751L8.44935 13.4001C8.51602 13.3584 8.59102 13.3334 8.66602 13.3334Z" fill="#99A1B7"/>
@@ -68,6 +68,24 @@
                         <span> {{get_phrase('Gallery')}} </span>
                     </div>
                 </a>
+                <ul class="first-sub-menu">
+                    <li class="sidebar-second-li {{ request()->routeIs('admin.gallery.index') || request()->routeIs('admin.gallery.create') || request()->routeIs('admin.gallery.edit') ? 'active' : '' }}">
+                        <a href="{{ route('admin.gallery.index') }}">
+                            {{ get_phrase('All Gallery Items') }}
+                            @if(\App\Models\Gallery::count() > 0)
+                                <span class="badge bg-primary ms-1">{{ \App\Models\Gallery::count() }}</span>
+                            @endif
+                        </a>
+                    </li>
+                    <li class="sidebar-second-li {{ request()->routeIs('admin.gallery.categories') ? 'active' : '' }}">
+                        <a href="{{ route('admin.gallery.categories') }}">
+                            {{ get_phrase('Gallery Categories') }}
+                            @if(\App\Models\GalleryCategory::count() > 0)
+                                <span class="badge bg-success ms-1">{{ \App\Models\GalleryCategory::count() }}</span>
+                            @endif
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <!-- Team -->
