@@ -12,18 +12,16 @@ use Illuminate\Support\Facades\DB;
 class RegistrationController extends Controller
 {
     /**
-     * Constructor - Apply auth middleware
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
-    /**
      * Show registration form for a package
      */
     public function create($packageId)
     {
+        // Check authentication
+        if (!Auth::check()) {
+            Toastr::error('Silakan login terlebih dahulu untuk mendaftar.', 'Error');
+            return redirect()->route('login');
+        }
+
         // Only customers can register for packages
         if (Auth::user()->type !== 'customer') {
             Toastr::error('Hanya customer yang dapat mendaftar untuk paket pelatihan. Agent tidak dapat mendaftar.', 'Error');
