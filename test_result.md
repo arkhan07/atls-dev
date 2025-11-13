@@ -24,13 +24,16 @@
 **Note**: Pagination will show when agents > 20
 
 ### Issue #2: My Packages Status Update SQL Error (P0)
-**Status**: INVESTIGATION
+**Status**: FIXED ✅
 **Problem**: SQL error saat agen mengubah status paket
-**Findings So Far**: 
-- Controller code (`PackageController@toggleStatus`) terlihat benar menggunakan Eloquent
-- Model Package sudah memiliki 'status' di $fillable
-- Belum menemukan actual error di log
-**Next Steps**: Test fitur secara langsung untuk reproduce error
+**Root Cause**: Database trigger `package_status_log` yang mencoba INSERT ke `activity_logs` dengan columns yang tidak exist (table_name, record_id, action, old_value, new_value, changed_by) - trigger ini out of sync dengan actual table structure
+**Solution**: Dropped the incorrect trigger: `DROP TRIGGER IF EXISTS package_status_log;`
+**Why this works**: Application already has `PackageObserver` yang properly log activities dengan correct table structure
+**Testing**: 
+- Tested via direct SQL query - SUCCESS
+- Tested via web UI as agent - SUCCESS
+- Status toggle from Active → Inactive → Active works perfectly
+- Success message appears correctly
 
 ---
 
