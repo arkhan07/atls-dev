@@ -72,8 +72,8 @@ class GalleryController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+            $imageFile = $request->file('image');
+            $imageName = time() . '_' . Str::random(10) . '.' . $imageFile->getClientOriginalExtension();
             
             // Create directory if not exists
             $uploadPath = public_path('uploads/gallery/');
@@ -81,13 +81,13 @@ class GalleryController extends Controller
                 mkdir($uploadPath, 0755, true);
             }
 
+            // Initialize Image Manager with GD driver
+            $manager = new ImageManager(new Driver());
+            
             // Resize and save image
-            $img = Image::make($image);
-            $img->resize(1200, 800, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $img->save($uploadPath . $imageName, 80); // 80% quality
+            $img = $manager->read($imageFile->getRealPath());
+            $img->scale(width: 1200);
+            $img->save($uploadPath . $imageName, quality: 80);
 
             // Create thumbnail
             $thumbnailPath = public_path('uploads/gallery/thumbnails/');
@@ -95,12 +95,9 @@ class GalleryController extends Controller
                 mkdir($thumbnailPath, 0755, true);
             }
             
-            $thumbnail = Image::make($image);
-            $thumbnail->resize(400, 300, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $thumbnail->save($thumbnailPath . $imageName, 80);
+            $thumbnail = $manager->read($imageFile->getRealPath());
+            $thumbnail->cover(400, 300);
+            $thumbnail->save($thumbnailPath . $imageName, quality: 80);
 
             $gallery->image = $imageName;
         }
