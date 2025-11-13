@@ -48,6 +48,8 @@ class ATLsRegistration extends Model
         'status',
         'payment_status',
         'amount_paid',
+        'payment_proof',
+        'payment_proof_uploaded_at',
         'registered_at',
         'confirmed_at',
     ];
