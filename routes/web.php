@@ -399,6 +399,14 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     // END GALLERY MANAGEMENT SECTION
     // ====================================
 
+    // ====================================
+    // ATLS REGISTRATIONS MANAGEMENT
+    // ====================================
+    Route::prefix('registrations')->name('admin.registrations.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ATLsRegistrationController::class, 'index'])->name('index');
+        Route::get('/{id}', [\App\Http\Controllers\Admin\ATLsRegistrationController::class, 'show'])->name('show');
+    });
+
     // category route
     Route::get('/categories/{type}', [CategoryController::class, 'index'])->name('admin.categories');
     Route::get('/add-category/{type}', [CategoryController::class, 'create_category'])->name('admin.add-category');
