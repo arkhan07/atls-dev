@@ -293,6 +293,7 @@ Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(functi
     Route::prefix('registrations')->name('registrations.')->group(function () {
         Route::get('/', [\App\Http\Controllers\RegistrationController::class, 'index'])->name('index');
         Route::get('/{id}', [\App\Http\Controllers\RegistrationController::class, 'show'])->name('show');
+        Route::post('/{id}/upload-payment-proof', [\App\Http\Controllers\RegistrationController::class, 'uploadPaymentProof'])->name('upload-payment-proof');
     });
 });
 
