@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('atls_registrations', function (Blueprint $table) {
-            //
+            $table->dropColumn(['payment_proof', 'payment_proof_uploaded_at']);
         });
     }
 };
