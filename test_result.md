@@ -10,6 +10,17 @@
 - User reported pagination "Agent Lists" tidak tampil dan tidak berfungsi
 - User reported error SQL saat mengubah status paket di "My Packages"
 
+## Environment Setup Done
+- Installed PHP 8.2 and all required extensions
+- Installed and configured MariaDB
+- Imported database from `/app/database/atlsindonesia_db.sql`
+- Created supervisor configs for both Laravel and MariaDB
+- Application now running on port 3000
+
+## Credentials
+- Admin: csscreative7@gmail.com / password
+- Agent (Surabaya): adminsurabaya@atlsindonesia.com / agent123
+
 ## Current Testing Session
 
 ### Issue #1: Agent Lists Pagination Not Working (P1)
