@@ -139,4 +139,15 @@ class ATLsRegistration extends Model
         }
         return $this->age;
     }
+
+    // Accessor for payment proof URL
+    public function getPaymentProofUrlAttribute()
+    {
+        if ($this->payment_proof) {
+            if (file_exists(storage_path('app/public/' . $this->payment_proof))) {
+                return asset('storage/' . $this->payment_proof);
+            }
+        }
+        return null;
+    }
 }
