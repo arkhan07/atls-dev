@@ -64,13 +64,15 @@
                         @endforeach
                     </tbody>
                 </table>
-                
-                <!-- Pagination -->
-                <div class="mt-3 d-flex justify-content-center">
-                    {{ $users->links() }}
-                </div>
             @else
                 @include('layouts.no_data_found')
+            @endif
+            
+            <!-- Pagination -->
+            @if(count($users) > 0)
+            <div class="d-flex justify-content-center mt-4">
+                {{ $users->withQueryString()->links() }}
+            </div>
             @endif
         </div>
     </div>
