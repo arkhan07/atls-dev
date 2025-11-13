@@ -24,6 +24,12 @@ class RegistrationController extends Controller
      */
     public function create($packageId)
     {
+        // Only customers can register for packages
+        if (Auth::user()->type !== 'customer') {
+            Toastr::error('Hanya customer yang dapat mendaftar untuk paket pelatihan. Agent tidak dapat mendaftar.', 'Error');
+            return redirect()->back();
+        }
+
         $package = Package::with('region')->findOrFail($packageId);
         
         // Check if package is active
