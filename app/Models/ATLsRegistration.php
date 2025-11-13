@@ -56,6 +56,7 @@ class ATLsRegistration extends Model
         'birth_date' => 'date',
         'previous_certification_date' => 'date',
         'is_certified' => 'boolean',
+        'agreed_to_terms' => 'boolean',
         'amount_paid' => 'decimal:2',
         'registered_at' => 'datetime',
         'confirmed_at' => 'datetime',
