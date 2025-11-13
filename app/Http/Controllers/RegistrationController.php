@@ -98,26 +98,46 @@ class RegistrationController extends Controller
         try {
             DB::beginTransaction();
             
+            // Handle certificate file upload
+            $certificateFilePath = null;
+            if ($request->hasFile('certificate_file')) {
+                $certificateFilePath = $request->file('certificate_file')->store('registrations/certificates', 'public');
+            }
+
+            // Calculate age from birth date
+            $age = null;
+            if ($validated['birth_date']) {
+                $age = \Carbon\Carbon::parse($validated['birth_date'])->age;
+            }
+            
             // Create registration
             $registration = ATLsRegistration::create([
                 'user_id' => Auth::id(),
                 'package_id' => $packageId,
+                'title' => $validated['title'] ?? null,
                 'full_name' => $validated['full_name'],
+                'nickname' => $validated['nickname'] ?? null,
                 'email' => $validated['email'],
                 'phone' => $validated['phone'],
+                'place_of_birth' => $validated['place_of_birth'] ?? null,
+                'birth_date' => $validated['birth_date'],
+                'age' => $age,
+                'gender' => $validated['gender'],
+                'religion' => $validated['religion'] ?? null,
                 'id_number' => $validated['id_number'] ?? null,
-                'birth_date' => $validated['birth_date'] ?? null,
-                'gender' => $validated['gender'] ?? null,
-                'profession' => $validated['profession'] ?? null,
-                'institution' => $validated['institution'] ?? null,
-                'specialization' => $validated['specialization'] ?? null,
-                'license_number' => $validated['license_number'] ?? null,
-                'address' => $validated['address'] ?? null,
+                'nik' => $validated['nik'] ?? null,
+                'plataran_sehat_name' => $validated['plataran_sehat_name'] ?? null,
+                'shirt_size' => $validated['shirt_size'] ?? null,
+                'certificate_file' => $certificateFilePath,
+                'address' => $validated['address'],
                 'city' => $validated['city'] ?? null,
                 'province' => $validated['province'] ?? null,
+                'shipping_address' => $validated['shipping_address'] ?? $validated['address'],
+                'shipping_city' => $validated['shipping_city'] ?? $validated['city'],
+                'shipping_province' => $validated['shipping_province'] ?? $validated['province'],
+                'shipping_postal_code' => $validated['shipping_postal_code'] ?? null,
                 'notes' => $validated['notes'] ?? null,
-                'is_certified' => $request->has('is_certified'),
-                'previous_certification_date' => $validated['previous_certification_date'] ?? null,
+                'agreed_to_terms' => true,
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
                 'amount_paid' => $package->price,
