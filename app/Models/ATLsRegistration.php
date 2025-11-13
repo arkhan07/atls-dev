@@ -60,6 +60,7 @@ class ATLsRegistration extends Model
         'is_certified' => 'boolean',
         'agreed_to_terms' => 'boolean',
         'amount_paid' => 'decimal:2',
+        'payment_proof_uploaded_at' => 'datetime',
         'registered_at' => 'datetime',
         'confirmed_at' => 'datetime',
     ];
