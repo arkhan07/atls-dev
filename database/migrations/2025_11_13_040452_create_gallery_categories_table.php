@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('gallery_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('name', 100);
+            $table->string('slug', 100)->unique();
+            $table->text('description')->nullable();
+            $table->string('icon', 50)->nullable();
+            $table->integer('sort_order')->default(0);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }
