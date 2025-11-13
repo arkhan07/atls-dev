@@ -54,26 +54,39 @@ class RegistrationController extends Controller
      */
     public function store(Request $request, $packageId)
     {
+        // Only customers can register
+        if (Auth::user()->type !== 'customer') {
+            Toastr::error('Hanya customer yang dapat mendaftar.', 'Error');
+            return redirect()->back();
+        }
+
         $package = Package::findOrFail($packageId);
         
         // Validate
         $validated = $request->validate([
+            'title' => 'nullable|string|max:50',
             'full_name' => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:100',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
+            'place_of_birth' => 'nullable|string|max:100',
+            'birth_date' => 'required|date',
+            'gender' => 'required|in:male,female',
+            'religion' => 'nullable|string|max:50',
             'id_number' => 'nullable|string|max:50',
-            'birth_date' => 'nullable|date',
-            'gender' => 'nullable|in:male,female',
-            'profession' => 'nullable|string|max:100',
-            'institution' => 'nullable|string|max:255',
-            'specialization' => 'nullable|string|max:100',
-            'license_number' => 'nullable|string|max:100',
-            'address' => 'nullable|string',
+            'nik' => 'nullable|string|max:16',
+            'plataran_sehat_name' => 'nullable|string|max:255',
+            'shirt_size' => 'nullable|in:XS,S,M,L,XL,XXL,XXXL',
+            'certificate_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // Max 5MB
+            'address' => 'required|string',
             'city' => 'nullable|string|max:100',
             'province' => 'nullable|string|max:100',
+            'shipping_address' => 'nullable|string',
+            'shipping_city' => 'nullable|string|max:100',
+            'shipping_province' => 'nullable|string|max:100',
+            'shipping_postal_code' => 'nullable|string|max:10',
             'notes' => 'nullable|string',
-            'is_certified' => 'nullable|boolean',
-            'previous_certification_date' => 'nullable|date',
+            'agreed_to_terms' => 'required|accepted',
         ]);
         
         // Check quota again
