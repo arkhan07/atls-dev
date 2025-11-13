@@ -288,6 +288,12 @@ Route::middleware(['auth'])->prefix('customer')->name('customer.')->group(functi
         Route::get('/registration/{id}/certificate', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'certificate'])->name('certificate');
         Route::get('/registration/{id}/invoice', [App\Http\Controllers\Customer\PackageRegistrationController::class, 'invoice'])->name('invoice');
     });
+    
+    // ATLS Registrations (New System)
+    Route::prefix('registrations')->name('registrations.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\RegistrationController::class, 'index'])->name('index');
+        Route::get('/{id}', [\App\Http\Controllers\RegistrationController::class, 'show'])->name('show');
+    });
 });
 
 // =====================================================
