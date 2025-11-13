@@ -21,6 +21,30 @@
 - Admin: csscreative7@gmail.com / password
 - Agent (Surabaya): adminsurabaya@atlsindonesia.com / agent123
 
+## Feature Implementation - ATLS Registration System
+
+### Phase 1: Database & Models ✅ DONE
+- Created migration for `atls_registrations` table with comprehensive fields
+- Created `ATLsRegistration` model with relationships, accessors, and scopes
+- Updated `Package` model to add relationship to ATLS registrations
+
+### Phase 2: Controllers & Routes ✅ DONE
+- Created `RegistrationController` for public registration forms
+- Created `Admin/ATLsRegistrationController` for admin management
+- Added routes:
+  - Public: `/register-package/{package}` (GET/POST)
+  - Customer: `/customer/registrations` (index, show)
+  - Admin: `/admin/registrations` (index, show)
+
+### Phase 3: Views ✅ DONE
+- Created registration form view (`frontend/register-package.blade.php`)
+- Created customer registrations list view
+- Updated region-detail page to link to registration form (changed from WhatsApp)
+- Added "Registrasi ATLS" menu to user navigation
+
+### Phase 4: Admin Views 🔄 IN PROGRESS
+- Need to create admin registration management views
+
 ## Current Testing Session
 
 ### Issue #1: Agent Lists Pagination Not Working (P1)
