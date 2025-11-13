@@ -1,33 +1,39 @@
 {{-- resources/views/admin/otp/logs.blade.php --}}
 @extends('layouts.admin')
-@push('title', get_phrase('OTP Logs'))
+@section('title', get_phrase('WhatsApp OTP Logs'))
+@section('admin_layout')
 
-@section('page_header')
-<div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
-    <div class="d-flex align-items-center">
-        <h3 class="page-title">{{ get_phrase('WhatsApp OTP Logs') }}</h3>
-    </div>
-    <div class="d-flex align-items-center">
-        <button type="button" class="btn btn-primary me-2" onclick="exportLogs()">
-            <i class="mdi mdi-download"></i> {{ get_phrase('Export CSV') }}
-        </button>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                <i class="mdi mdi-delete-sweep"></i> {{ get_phrase('Cleanup') }}
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#" onclick="cleanupOTP('expired')">{{ get_phrase('Clean Expired') }}</a></li>
-                <li><a class="dropdown-item" href="#" onclick="cleanupOTP('verified')">{{ get_phrase('Clean Verified') }}</a></li>
-                <li><a class="dropdown-item" href="#" onclick="cleanupOTP('old')">{{ get_phrase('Clean Old (7+ days)') }}</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="#" onclick="cleanupOTP('all')">{{ get_phrase('Clean All') }}</a></li>
-            </ul>
+<div class="ol-card radius-8px">
+    <div class="ol-card-body my-2 py-12px px-20px">
+        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap flex-md-nowrap">
+            <h4 class="title fs-16px">
+                <i class="fi-rr-document me-2"></i>
+                {{ get_phrase('WhatsApp OTP Logs') }}
+            </h4>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn ol-btn-outline-secondary d-flex align-items-center cg-10px" onclick="exportLogs()">
+                    <span class="fi-rr-download"></span>
+                    <span>{{ get_phrase('Export CSV') }}</span>
+                </button>
+                <div class="dropdown">
+                    <button class="btn ol-btn-outline-secondary d-flex align-items-center cg-10px dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span class="fi-rr-trash"></span>
+                        <span>{{ get_phrase('Cleanup') }}</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="cleanupOTP('expired')">{{ get_phrase('Clean Expired') }}</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="cleanupOTP('verified')">{{ get_phrase('Clean Verified') }}</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="cleanupOTP('old')">{{ get_phrase('Clean Old (7+ days)') }}</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="javascript:void(0);" onclick="cleanupOTP('all')">{{ get_phrase('Clean All') }}</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-@endsection
 
-@section('content')
+<div class="mt-3"
 {{-- Statistics Cards --}}
 <div class="row">
     <div class="col-md-3 grid-margin stretch-card">
