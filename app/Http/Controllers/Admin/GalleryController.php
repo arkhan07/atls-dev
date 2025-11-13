@@ -181,29 +181,25 @@ class GalleryController extends Controller
     public function destroy(Gallery $gallery)
     {
         try {
-            \DB::beginTransaction();
-            
-            // Delete image files
+            // Delete image files first
             $imagePath = public_path('uploads/gallery/' . $gallery->image);
             $thumbnailPath = public_path('uploads/gallery/thumbnails/' . $gallery->image);
             
-            if (file_exists($imagePath)) {
+            if (file_exists($imagePath) && is_file($imagePath)) {
                 @unlink($imagePath);
             }
-            if (file_exists($thumbnailPath)) {
+            if (file_exists($thumbnailPath) && is_file($thumbnailPath)) {
                 @unlink($thumbnailPath);
             }
 
-            // Delete record using DB query to avoid any model events
-            \DB::table('galleries')->where('id', $gallery->id)->delete();
-            
-            \DB::commit();
+            // Delete the gallery record
+            $gallery->delete();
 
             return redirect()->route('admin.gallery.index')
                             ->with('success', get_phrase('Gallery item deleted successfully'));
                             
         } catch (\Exception $e) {
-            \DB::rollBack();
+            \Log::error('Gallery delete error: ' . $e->getMessage());
             
             return redirect()->route('admin.gallery.index')
                             ->with('error', 'Error deleting gallery: ' . $e->getMessage());
