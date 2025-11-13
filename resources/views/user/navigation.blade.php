@@ -143,6 +143,23 @@
                                     </span>
                                 </a>
                             </li>
+
+                            <li class="sidebar-nav-item"><a href="{{ route('agent.registrations.index') }}" class="sidebar-nav-link {{ $active == 'registrations' ? 'active' : '' }}">
+                                    <span class="d-flex align-items-start mt-1px gap-6px">
+                                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 7.5H12M6 10.5H10.5M7.5 15H10.5C13.5 15 15 13.5 15 10.5V7.5C15 4.5 13.5 3 10.5 3H7.5C4.5 3 3 4.5 3 7.5V10.5C3 13.5 4.5 15 7.5 15Z" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="mt-1px">{{ get_phrase('Pendaftaran ATLS') }}</span>
+                                    </span>
+                                    <span class="badge-secondary mt-1px">
+                                        @php
+                                            $agentPackages = App\Models\Package::where('user_id', user('id'))->pluck('id');
+                                            $pendingRegistrations = App\Models\ATLsRegistration::whereIn('package_id', $agentPackages)->where('payment_status', 'pending')->count();
+                                        @endphp
+                                        {{ $pendingRegistrations }}
+                                    </span>
+                                </a>
+                            </li>
                           
                             {{-- Shop Addon --}}
                             @if (addon_status('shop') == 1)
