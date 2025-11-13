@@ -49,12 +49,18 @@ class Region extends Model
     // Accessors for URLs
     public function getIconImageUrlAttribute()
     {
-        return $this->icon_image ? asset('storage/' . $this->icon_image) : null;
+        if ($this->icon_image && file_exists(storage_path('app/public/' . $this->icon_image))) {
+            return asset('storage/' . $this->icon_image);
+        }
+        return asset('placeholder-region-icon.svg');
     }
 
     public function getBannerImageUrlAttribute()
     {
-        return $this->banner_image ? asset('storage/' . $this->banner_image) : null;
+        if ($this->banner_image && file_exists(storage_path('app/public/' . $this->banner_image))) {
+            return asset('storage/' . $this->banner_image);
+        }
+        return asset('placeholder-region-banner.jpg');
     }
 
     public function getPageUrlAttribute()
