@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\DB;
 class RegistrationController extends Controller
 {
     /**
+     * Constructor - Apply auth middleware
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
      * Show registration form for a package
      */
     public function create($packageId)
