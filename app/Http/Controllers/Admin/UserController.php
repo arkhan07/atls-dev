@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function index($type, $action){
         $page_data['type'] = $type;
-        $page_data['users'] = User::where('type', $type)->get();
+        $page_data['users'] = User::where('type', $type)->paginate(20);
         if($action == 'all'){
             return view('admin.user.index', $page_data); 
         }elseif($action == 'add'){
