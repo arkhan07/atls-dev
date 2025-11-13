@@ -14,13 +14,17 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
 
 
 //check is it valet server or laravel inbuilt server
-if ($hostname == '127.0.0.1:8000' || str_contains($script_name, 'valet/')) {
+// Also check for local development (127.0.0.1 or localhost) and artisan serve on any port
+if ($hostname == '127.0.0.1:8000' || 
+    $hostname == '127.0.0.1:3000' || 
+    $hostname == 'localhost:3000' ||
+    $hostname == 'localhost:8000' ||
+    str_starts_with($hostname, '0.0.0.0') ||
+    str_contains($script_name, 'valet/') ||
+    str_contains($hostname, 'preview.emergentagent.com')) {
     $asset_url = null;
- 
-
 } else {
     $asset_url = str_replace("index.php", "", $script_name) . 'public';
-   
 }
 
 $app_url = $host_type . $hostname;
