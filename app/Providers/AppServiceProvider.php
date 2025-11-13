@@ -23,5 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Paginator::useBootstrap();
+        
+        // Force HTTPS in production
+        if (config('app.env') === 'production' || request()->header('X-Forwarded-Proto') === 'https') {
+            \URL::forceScheme('https');
+        }
     }
 }
