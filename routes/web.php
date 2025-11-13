@@ -372,8 +372,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         Route::post('/update-sort-order', [GalleryController::class, 'updateSortOrder'])->name('update-sort-order');
         
         // Gallery Categories Management
-        Route::get('/categories/manage', [GalleryController::class, 'manageCategories'])->name('categories.manage');
-        Route::post('/categories/store', [GalleryController::class, 'storeCategory'])->name('categories.store');
+        Route::get('/categories', [GalleryController::class, 'manageCategories'])->name('categories');
+        Route::post('/categories', [GalleryController::class, 'storeCategory'])->name('categories.store');
         Route::put('/categories/{id}', [GalleryController::class, 'updateCategory'])->name('categories.update');
         Route::delete('/categories/{id}', [GalleryController::class, 'destroyCategory'])->name('categories.destroy');
         
