@@ -10,6 +10,8 @@ class ATLsRegistration extends Model
 {
     use HasFactory;
 
+    protected $table = 'atls_registrations';
+
     protected $fillable = [
         'user_id',
         'package_id',
