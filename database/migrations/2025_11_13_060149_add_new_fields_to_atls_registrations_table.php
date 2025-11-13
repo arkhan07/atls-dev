@@ -45,7 +45,22 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('atls_registrations', function (Blueprint $table) {
-            //
+            $table->dropColumn([
+                'title',
+                'nickname',
+                'place_of_birth',
+                'age',
+                'religion',
+                'nik',
+                'plataran_sehat_name',
+                'shirt_size',
+                'certificate_file',
+                'shipping_address',
+                'shipping_city',
+                'shipping_province',
+                'shipping_postal_code',
+                'agreed_to_terms'
+            ]);
         });
     }
 };
