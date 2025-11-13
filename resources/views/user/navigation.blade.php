@@ -47,6 +47,23 @@
                                 </span>
                             </a>
                         </li>
+                        
+                        <li class="sidebar-nav-item"><a href="{{ route('customer.registrations.index') }}" class="sidebar-nav-link {{ $active == 'registrations' ? 'active' : '' }}">
+                                <span class="d-flex align-items-start mt-1px gap-6px">
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6 7.5H12M6 10.5H10.5M7.5 15H10.5C13.5 15 15 13.5 15 10.5V7.5C15 4.5 13.5 3 10.5 3H7.5C4.5 3 3 4.5 3 7.5V10.5C3 13.5 4.5 15 7.5 15Z" stroke="#99A1B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span class="mt-1px">{{ get_phrase('Registrasi ATLS') }}</span>
+                                </span>
+                                <span class="badge-secondary mt-1px">
+                                    @php
+                                        $myRegistrations = App\Models\ATLsRegistration::where('user_id', user('id'))->count();
+                                    @endphp
+                                    {{ $myRegistrations }}
+                                </span>
+                            </a>
+                        </li>
+                        
                         @if (addon_status('shop') == 1)
                         <li class="sidebar-nav-item"><a href="{{ route('customer.order') }}" class="sidebar-nav-link {{ $active == 'order' ? 'active' : '' }}">
                                 <span class="d-flex align-items-center mt-1px gap-6px">
