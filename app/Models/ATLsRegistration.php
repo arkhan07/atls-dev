@@ -124,9 +124,9 @@ class ATLsRegistration extends Model
     public function getCertificateFileUrlAttribute()
     {
         if ($this->certificate_file) {
-            if (file_exists(storage_path('app/public/' . $this->certificate_file))) {
-                return asset('storage/' . $this->certificate_file);
-            }
+            // Return URL directly without file_exists check
+            // File existence will be checked in the view for better error handling
+            return asset('storage/' . $this->certificate_file);
         }
         return null;
     }
@@ -144,9 +144,9 @@ class ATLsRegistration extends Model
     public function getPaymentProofUrlAttribute()
     {
         if ($this->payment_proof) {
-            if (file_exists(storage_path('app/public/' . $this->payment_proof))) {
-                return asset('storage/' . $this->payment_proof);
-            }
+            // Return URL directly without file_exists check
+            // File existence will be checked in the view for better error handling
+            return asset('storage/' . $this->payment_proof);
         }
         return null;
     }

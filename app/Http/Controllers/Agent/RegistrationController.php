@@ -77,19 +77,54 @@ class RegistrationController extends Controller
     }
 
     /**
+     * Update registration status
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        // Get agent's packages
+        $agentPackages = Package::where('user_id', Auth::id())->pluck('id');
+
+        $registration = ATLsRegistration::whereIn('package_id', $agentPackages)
+            ->findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,cancelled,completed',
+        ]);
+
+        try {
+            $updateData = [
+                'status' => $request->status,
+            ];
+
+            // If confirmed, set confirmed_at timestamp
+            if ($request->status === 'confirmed' && !$registration->confirmed_at) {
+                $updateData['confirmed_at'] = now();
+            }
+
+            $registration->update($updateData);
+
+            Toastr::success('Status pendaftaran berhasil diupdate.', 'Sukses');
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            Toastr::error('Gagal update status: ' . $e->getMessage(), 'Error');
+            return redirect()->back();
+        }
+    }
+
+    /**
      * Approve or reject payment
      */
     public function updatePaymentStatus(Request $request, $id)
     {
         // Get agent's packages
         $agentPackages = Package::where('user_id', Auth::id())->pluck('id');
-        
+
         $registration = ATLsRegistration::whereIn('package_id', $agentPackages)
             ->findOrFail($id);
 
         $request->validate([
-            'payment_status' => 'required|in:paid,unpaid',
-            'status' => 'nullable|in:confirmed,pending',
+            'payment_status' => 'required|in:paid,unpaid,pending',
         ]);
 
         try {
@@ -105,8 +140,8 @@ class RegistrationController extends Controller
 
             $registration->update($updateData);
 
-            $message = $request->payment_status === 'paid' 
-                ? 'Pembayaran berhasil disetujui dan pendaftaran dikonfirmasi.' 
+            $message = $request->payment_status === 'paid'
+                ? 'Pembayaran berhasil disetujui dan pendaftaran dikonfirmasi.'
                 : 'Status pembayaran berhasil diupdate.';
 
             Toastr::success($message, 'Sukses');
