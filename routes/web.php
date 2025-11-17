@@ -259,6 +259,7 @@ Route::prefix('agent')->middleware(['auth', 'agent'])->name('agent.')->group(fun
         Route::get('/', [App\Http\Controllers\Agent\RegistrationController::class, 'index'])->name('index');
         Route::get('/export', [App\Http\Controllers\Agent\RegistrationController::class, 'export'])->name('export');
         Route::get('/{id}', [App\Http\Controllers\Agent\RegistrationController::class, 'show'])->name('show');
+        Route::post('/{id}/status', [App\Http\Controllers\Agent\RegistrationController::class, 'updateStatus'])->name('update_status');
         Route::post('/{id}/payment-status', [App\Http\Controllers\Agent\RegistrationController::class, 'updatePaymentStatus'])->name('update_payment_status');
     });
 });

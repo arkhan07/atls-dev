@@ -102,17 +102,37 @@
                 <div class="info-card">
                     <h5 class="mb-3"><i class="fas fa-upload me-2"></i>Upload Bukti Transfer</h5>
                     
-                    @if($registration->payment_proof_url)
+                    @if($registration->payment_proof)
                     <div class="alert alert-info">
                         <i class="fas fa-check-circle me-2"></i>
-                        Bukti transfer telah diupload. 
+                        Bukti transfer telah diupload.
                         @if($registration->payment_status === 'pending')
                             <strong>Menunggu verifikasi admin.</strong>
                         @endif
                     </div>
                     <div class="text-center mb-3">
-                        <img src="{{ $registration->payment_proof_url }}" alt="Payment Proof" class="img-fluid" style="max-height: 300px; border-radius: 8px;">
-                        <p class="text-muted mt-2 mb-0">Upload: {{ $registration->payment_proof_uploaded_at ? $registration->payment_proof_uploaded_at->format('d M Y, H:i') : '-' }}</p>
+                        @if($registration->payment_proof_url)
+                            @php
+                                $extension = strtolower(pathinfo($registration->payment_proof, PATHINFO_EXTENSION));
+                            @endphp
+                            @if(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                <a href="{{ $registration->payment_proof_url }}" target="_blank">
+                                    <img src="{{ $registration->payment_proof_url }}" alt="Payment Proof" class="img-fluid" style="max-height: 400px; border-radius: 8px; border: 2px solid #e5e7eb;">
+                                </a>
+                            @elseif($extension === 'pdf')
+                                <a href="{{ $registration->payment_proof_url }}" target="_blank" class="btn btn-outline-primary">
+                                    <i class="fas fa-file-pdf me-2"></i>Lihat PDF Bukti Transfer
+                                </a>
+                            @endif
+                        @else
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                File bukti transfer tidak ditemukan. Silakan upload ulang.
+                            </div>
+                        @endif
+                        <p class="text-muted mt-2 mb-0 small">
+                            <i class="fas fa-clock me-1"></i>Upload: {{ $registration->payment_proof_uploaded_at ? $registration->payment_proof_uploaded_at->format('d M Y, H:i') : '-' }}
+                        </p>
                     </div>
                     <div class="text-center">
                         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#uploadForm">
@@ -121,7 +141,7 @@
                     </div>
                     <div class="collapse mt-3" id="uploadForm">
                         <hr>
-                        <form action="{{ route('customer.registrations.upload-payment-proof', $registration->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('registrations.upload-payment-proof', $registration->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Upload Bukti Transfer Baru</label>
@@ -139,7 +159,7 @@
                         <h6>Upload Bukti Transfer Anda</h6>
                         <p class="text-muted mb-4">Silakan upload bukti pembayaran untuk memproses pendaftaran Anda</p>
                         
-                        <form action="{{ route('customer.registrations.upload-payment-proof', $registration->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('registrations.upload-payment-proof', $registration->id) }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
                                 <input type="file" name="payment_proof" class="form-control" accept="image/*,application/pdf" required>

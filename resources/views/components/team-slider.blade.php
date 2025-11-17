@@ -17,10 +17,11 @@
                         <div class="swiper-slide">
                             <div class="team-member-card">
                                 <div class="member-image-wrapper">
-                                    @if($member->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($member->image))
-                                        <img src="{{ asset('storage/' . $member->image) }}" 
-                                             alt="{{ $member->name }}" 
-                                             class="member-image">
+                                    @if($member->image)
+                                        <img src="{{ asset('storage/' . $member->image) }}"
+                                             alt="{{ $member->name }}"
+                                             class="member-image"
+                                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'no-image-placeholder\'><i class=\'fi-rr-user\'></i></div>';">
                                     @else
                                         <div class="no-image-placeholder">
                                             <i class="fi-rr-user"></i>
@@ -282,15 +283,22 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Swiper for team slider
-    if (document.querySelector('.team-swiper')) {
+    const teamSwiperEl = document.querySelector('.team-swiper');
+    if (teamSwiperEl) {
+        // Count slides
+        const slideCount = teamSwiperEl.querySelectorAll('.swiper-slide').length;
+
+        // Only enable loop if there are enough slides (more than max slidesPerView)
+        const enableLoop = slideCount > 4;
+
         const teamSwiper = new Swiper('.team-swiper', {
             slidesPerView: 1,
             spaceBetween: 25,
-            loop: true,
-            autoplay: {
+            loop: enableLoop,
+            autoplay: enableLoop ? {
                 delay: 3500,
                 disableOnInteraction: false,
-            },
+            } : false,
             pagination: {
                 el: '.team-pagination',
                 clickable: true,
@@ -312,7 +320,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     slidesPerView: 4,
                     spaceBetween: 30,
                 }
-            }
+            },
+            // Prevent issues when slide count is low
+            watchOverflow: true,
+            observer: true,
+            observeParents: true,
         });
     }
 });

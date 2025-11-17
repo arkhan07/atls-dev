@@ -16,32 +16,34 @@
                     <div class="swiper-slide">
                         <div class="region-card">
                             <div class="region-icon-wrapper">
-                                @php
-                                    $iconImage = is_array($region) ? ($region['icon_image'] ?? null) : $region->icon_image;
-                                    $name = is_array($region) ? ($region['name'] ?? '') : $region->name;
-                                    $whatsapp = is_array($region) ? ($region['whatsapp'] ?? null) : $region->whatsapp;
-                                    $slug = is_array($region) ? ($region['slug'] ?? '') : $region->slug;
-                                @endphp
-                                
-                                @if($iconImage && \Illuminate\Support\Facades\Storage::disk('public')->exists($iconImage))
-                                    <img src="{{ asset('storage/' . $iconImage) }}" 
-                                         alt="{{ $name }}" 
-                                         class="region-icon">
+                                @if($region->icon_image_url)
+                                    <img src="{{ $region->icon_image_url }}"
+                                         alt="{{ $region->name }}"
+                                         class="region-icon"
+                                         onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'region-icon-placeholder\'><i class=\'fas fa-map-marker-alt\'></i></div>';">
                                 @else
                                     <div class="region-icon-placeholder">
                                         <i class="fas fa-map-marker-alt"></i>
                                     </div>
                                 @endif
                             </div>
-                            
+
                             <div class="region-info">
-                                <h4 class="region-name">{{ $name }}</h4>
-                                
+                                <h4 class="region-name">{{ $region->name }}</h4>
+
                                 <div class="region-actions">
-                                    @if($whatsapp)
+                                    {{-- Link to Region Detail Page --}}
+                                    <a href="{{ route('region.detail', $region->slug) }}"
+                                       class="btn btn-detail">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Detail Wilayah
+                                    </a>
+
+                                    {{-- WhatsApp Button --}}
+                                    @if($region->whatsapp)
                                         @php
                                             // Clean WhatsApp number - remove any non-numeric characters except +
-                                            $cleanWhatsapp = preg_replace('/[^0-9+]/', '', $whatsapp);
+                                            $cleanWhatsapp = preg_replace('/[^0-9+]/', '', $region->whatsapp);
                                             // If starts with 0, replace with 62
                                             if (substr($cleanWhatsapp, 0, 1) === '0') {
                                                 $cleanWhatsapp = '62' . substr($cleanWhatsapp, 1);
@@ -49,18 +51,13 @@
                                             // Remove + if exists
                                             $cleanWhatsapp = str_replace('+', '', $cleanWhatsapp);
                                         @endphp
-                                        <a href="https://wa.me/{{ $cleanWhatsapp }}" 
-                                           target="_blank" 
+                                        <a href="https://wa.me/{{ $cleanWhatsapp }}"
+                                           target="_blank"
                                            rel="noopener noreferrer"
                                            class="btn btn-whatsapp">
                                             <i class="fab fa-whatsapp me-2"></i>
                                             WhatsApp
                                         </a>
-                                    @else
-                                        <div class="no-whatsapp-info">
-                                            <i class="fas fa-info-circle me-1"></i>
-                                            Kontak belum tersedia
-                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -68,11 +65,11 @@
                     </div>
                     @endforeach
                 </div>
-                
+
                 <!-- Navigation -->
                 <div class="swiper-button-next region-nav-next"></div>
                 <div class="swiper-button-prev region-nav-prev"></div>
-                
+
                 <!-- Pagination -->
                 <div class="swiper-pagination region-pagination"></div>
             </div>
@@ -147,7 +144,8 @@
 .region-icon {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    transition: all 0.3s ease;
 }
 
 .region-card:hover .region-icon {
@@ -160,7 +158,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+    background: linear-gradient(135deg, #9f2325 0%, #c92a2c 100%);
+    border-radius: 50%;
     transition: all 0.3s ease;
 }
 
@@ -196,6 +195,28 @@
     width: 100%;
 }
 
+.btn-detail {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 400;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #9f2325;
+    color: white;
+    border: none;
+}
+
+.btn-detail:hover {
+    background: #7d1c1e;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(159, 35, 37, 0.4);
+}
+
 .btn-whatsapp {
     width: 100%;
     padding: 12px 20px;
@@ -218,7 +239,8 @@
     box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
 }
 
-.btn-whatsapp i {
+.btn-whatsapp i,
+.btn-detail i {
     font-size: 1.2rem;
 }
 
@@ -280,21 +302,22 @@
     .section-title {
         font-size: 2rem;
     }
-    
+
     .region-icon-wrapper {
         width: 100px;
         height: 100px;
     }
-    
+
     .region-icon-placeholder i {
         font-size: 3rem;
     }
-    
+
     .region-name {
         font-size: 1.3rem;
     }
-    
-    .btn-whatsapp {
+
+    .btn-whatsapp,
+    .btn-detail {
         padding: 10px 15px;
         font-size: 0.9rem;
     }
@@ -304,15 +327,22 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Region Swiper
-    if (document.querySelector('.regionSwiper')) {
+    const regionSwiperEl = document.querySelector('.regionSwiper');
+    if (regionSwiperEl) {
+        // Count slides
+        const slideCount = regionSwiperEl.querySelectorAll('.swiper-slide').length;
+
+        // Only enable loop if there are enough slides (more than max slidesPerView)
+        const enableLoop = slideCount > 4;
+
         var regionSwiper = new Swiper('.regionSwiper', {
             slidesPerView: 1,
             spaceBetween: 30,
-            loop: true,
-            autoplay: {
+            loop: enableLoop,
+            autoplay: enableLoop ? {
                 delay: 4000,
                 disableOnInteraction: false,
-            },
+            } : false,
             pagination: {
                 el: '.region-pagination',
                 clickable: true,
@@ -334,7 +364,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     slidesPerView: 4,
                     spaceBetween: 30,
                 }
-            }
+            },
+            // Prevent issues when slide count is low
+            watchOverflow: true,
+            observer: true,
+            observeParents: true,
         });
     }
 });
