@@ -209,9 +209,10 @@ class RegistrationController extends Controller
 
             // Store new payment proof
             $path = $request->file('payment_proof')->store('registrations/payment-proofs', 'public');
-            
+
             $registration->update([
                 'payment_proof' => $path,
+                'payment_proof_uploaded_at' => now(),
                 'payment_status' => 'pending', // Waiting for verification
             ]);
 
