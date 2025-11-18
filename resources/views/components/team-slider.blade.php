@@ -18,7 +18,7 @@
                             <div class="team-member-card">
                                 <div class="member-image-wrapper">
                                     @if($member->image)
-                                        <img src="{{ asset('storage/' . $member->image) }}"
+                                        <img src="{{ $member->image_url }}"
                                              alt="{{ $member->name }}"
                                              class="member-image"
                                              onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'no-image-placeholder\'><i class=\'fi-rr-user\'></i></div>';">

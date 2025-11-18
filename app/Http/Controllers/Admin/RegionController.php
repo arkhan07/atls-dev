@@ -90,11 +90,29 @@ class RegionController extends Controller
             $bannerPath = null;
 
             if ($request->hasFile('icon_image')) {
-                $iconPath = $request->file('icon_image')->store('regions/icons', 'public');
+                $iconFile = $request->file('icon_image');
+                $iconFilename = 'icon_' . time() . '_' . Str::random(10) . '.' . $iconFile->getClientOriginalExtension();
+
+                $uploadPath = public_path('uploads/regions/icons');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0775, true);
+                }
+
+                $iconFile->move($uploadPath, $iconFilename);
+                $iconPath = 'regions/icons/' . $iconFilename;
             }
 
             if ($request->hasFile('banner_image')) {
-                $bannerPath = $request->file('banner_image')->store('regions/banners', 'public');
+                $bannerFile = $request->file('banner_image');
+                $bannerFilename = 'banner_' . time() . '_' . Str::random(10) . '.' . $bannerFile->getClientOriginalExtension();
+
+                $uploadPath = public_path('uploads/regions/banners');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0775, true);
+                }
+
+                $bannerFile->move($uploadPath, $bannerFilename);
+                $bannerPath = 'regions/banners/' . $bannerFilename;
             }
 
             // Create region
@@ -178,18 +196,38 @@ class RegionController extends Controller
             // Handle image uploads
             if ($request->hasFile('icon_image')) {
                 // Delete old image
-                if ($region->icon_image && Storage::disk('public')->exists($region->icon_image)) {
-                    Storage::disk('public')->delete($region->icon_image);
+                if ($region->icon_image && file_exists(public_path('uploads/' . $region->icon_image))) {
+                    unlink(public_path('uploads/' . $region->icon_image));
                 }
-                $region->icon_image = $request->file('icon_image')->store('regions/icons', 'public');
+
+                $iconFile = $request->file('icon_image');
+                $iconFilename = 'icon_' . time() . '_' . Str::random(10) . '.' . $iconFile->getClientOriginalExtension();
+
+                $uploadPath = public_path('uploads/regions/icons');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0775, true);
+                }
+
+                $iconFile->move($uploadPath, $iconFilename);
+                $region->icon_image = 'regions/icons/' . $iconFilename;
             }
 
             if ($request->hasFile('banner_image')) {
                 // Delete old image
-                if ($region->banner_image && Storage::disk('public')->exists($region->banner_image)) {
-                    Storage::disk('public')->delete($region->banner_image);
+                if ($region->banner_image && file_exists(public_path('uploads/' . $region->banner_image))) {
+                    unlink(public_path('uploads/' . $region->banner_image));
                 }
-                $region->banner_image = $request->file('banner_image')->store('regions/banners', 'public');
+
+                $bannerFile = $request->file('banner_image');
+                $bannerFilename = 'banner_' . time() . '_' . Str::random(10) . '.' . $bannerFile->getClientOriginalExtension();
+
+                $uploadPath = public_path('uploads/regions/banners');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0775, true);
+                }
+
+                $bannerFile->move($uploadPath, $bannerFilename);
+                $region->banner_image = 'regions/banners/' . $bannerFilename;
             }
 
             // Update region
@@ -226,11 +264,11 @@ class RegionController extends Controller
             DB::beginTransaction();
 
             // Delete images
-            if ($region->icon_image && Storage::disk('public')->exists($region->icon_image)) {
-                Storage::disk('public')->delete($region->icon_image);
+            if ($region->icon_image && file_exists(public_path('uploads/' . $region->icon_image))) {
+                unlink(public_path('uploads/' . $region->icon_image));
             }
-            if ($region->banner_image && Storage::disk('public')->exists($region->banner_image)) {
-                Storage::disk('public')->delete($region->banner_image);
+            if ($region->banner_image && file_exists(public_path('uploads/' . $region->banner_image))) {
+                unlink(public_path('uploads/' . $region->banner_image));
             }
 
             // Delete region (page will be deleted automatically due to cascade)
@@ -298,11 +336,11 @@ class RegionController extends Controller
             
             foreach ($regions as $region) {
                 // Delete images
-                if ($region->icon_image && Storage::disk('public')->exists($region->icon_image)) {
-                    Storage::disk('public')->delete($region->icon_image);
+                if ($region->icon_image && file_exists(public_path('uploads/' . $region->icon_image))) {
+                    unlink(public_path('uploads/' . $region->icon_image));
                 }
-                if ($region->banner_image && Storage::disk('public')->exists($region->banner_image)) {
-                    Storage::disk('public')->delete($region->banner_image);
+                if ($region->banner_image && file_exists(public_path('uploads/' . $region->banner_image))) {
+                    unlink(public_path('uploads/' . $region->banner_image));
                 }
                 $region->delete();
             }

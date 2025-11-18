@@ -136,14 +136,16 @@ class TeamController extends Controller
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 $filename = 'team_' . time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                
+
                 // Create directory if not exists
-                if (!Storage::disk('public')->exists('team')) {
-                    Storage::disk('public')->makeDirectory('team');
+                $uploadPath = public_path('uploads/team-members');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0775, true);
                 }
-                
-                $path = $image->storeAs('team', $filename, 'public');
-                $data['image'] = $path;
+
+                // Move uploaded file to public/uploads/team-members
+                $image->move($uploadPath, $filename);
+                $data['image'] = 'team-members/' . $filename;
             }
 
             // Handle social links
@@ -245,20 +247,22 @@ class TeamController extends Controller
             // Handle image upload
             if ($request->hasFile('image')) {
                 // Delete old image
-                if ($team->image && Storage::disk('public')->exists($team->image)) {
-                    Storage::disk('public')->delete($team->image);
+                if ($team->image && file_exists(public_path('uploads/' . $team->image))) {
+                    unlink(public_path('uploads/' . $team->image));
                 }
-                
+
                 $image = $request->file('image');
                 $filename = 'team_' . time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                
+
                 // Create directory if not exists
-                if (!Storage::disk('public')->exists('team')) {
-                    Storage::disk('public')->makeDirectory('team');
+                $uploadPath = public_path('uploads/team-members');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0775, true);
                 }
-                
-                $path = $image->storeAs('team', $filename, 'public');
-                $data['image'] = $path;
+
+                // Move uploaded file to public/uploads/team-members
+                $image->move($uploadPath, $filename);
+                $data['image'] = 'team-members/' . $filename;
             }
 
             // Handle social links
@@ -296,12 +300,12 @@ class TeamController extends Controller
             DB::beginTransaction();
 
             $team = TeamMember::findOrFail($id);
-            
+
             // Delete image
-            if ($team->image && Storage::disk('public')->exists($team->image)) {
-                Storage::disk('public')->delete($team->image);
+            if ($team->image && file_exists(public_path('uploads/' . $team->image))) {
+                unlink(public_path('uploads/' . $team->image));
             }
-            
+
             $team->delete();
 
             DB::commit();
