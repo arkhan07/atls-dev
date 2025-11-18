@@ -122,16 +122,11 @@ class TeamMember extends Model
             if (filter_var($this->image, FILTER_VALIDATE_URL)) {
                 return $this->image;
             }
-            // Check if file exists in storage
-            if (file_exists(public_path('uploads/teams/' . $this->image))) {
-                return asset('uploads/teams/' . $this->image);
-            }
-            // Try storage path
-            if (file_exists(storage_path('app/public/teams/' . $this->image))) {
-                return asset('storage/teams/' . $this->image);
-            }
+            // Return storage URL directly without file_exists check
+            // The controller stores in 'team' folder, so we use that path
+            return asset('storage/' . $this->image);
         }
-        // Fallback to placeholder based on gender or default
+        // Fallback to placeholder
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&size=200&background=a02526&color=fff';
     }
 }
