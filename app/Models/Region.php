@@ -50,8 +50,8 @@ class Region extends Model
     public function getIconImageUrlAttribute()
     {
         if ($this->icon_image) {
-            // Return URL directly without file_exists check for better performance
-            return asset('storage/' . $this->icon_image);
+            // Return uploads URL (images stored in public/uploads/)
+            return asset('uploads/' . $this->icon_image);
         }
         return null;
     }
@@ -59,8 +59,8 @@ class Region extends Model
     public function getBannerImageUrlAttribute()
     {
         if ($this->banner_image) {
-            // Return URL directly without file_exists check for better performance
-            return asset('storage/' . $this->banner_image);
+            // Return uploads URL (images stored in public/uploads/)
+            return asset('uploads/' . $this->banner_image);
         }
         return null;
     }

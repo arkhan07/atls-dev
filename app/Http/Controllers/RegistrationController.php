@@ -203,12 +203,21 @@ class RegistrationController extends Controller
 
         try {
             // Delete old payment proof if exists
-            if ($registration->payment_proof && file_exists(storage_path('app/public/' . $registration->payment_proof))) {
-                unlink(storage_path('app/public/' . $registration->payment_proof));
+            if ($registration->payment_proof && file_exists(public_path('uploads/' . $registration->payment_proof))) {
+                unlink(public_path('uploads/' . $registration->payment_proof));
             }
 
             // Store new payment proof
-            $path = $request->file('payment_proof')->store('registrations/payment-proofs', 'public');
+            $file = $request->file('payment_proof');
+            $filename = 'payment_' . time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+
+            $uploadPath = public_path('uploads/registrations/payment-proofs');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0775, true);
+            }
+
+            $file->move($uploadPath, $filename);
+            $path = 'registrations/payment-proofs/' . $filename;
 
             $registration->update([
                 'payment_proof' => $path,

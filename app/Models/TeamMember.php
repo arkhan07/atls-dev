@@ -122,9 +122,8 @@ class TeamMember extends Model
             if (filter_var($this->image, FILTER_VALIDATE_URL)) {
                 return $this->image;
             }
-            // Return storage URL directly without file_exists check
-            // The controller stores in 'team' folder, so we use that path
-            return asset('storage/' . $this->image);
+            // Return uploads URL (images stored in public/uploads/)
+            return asset('uploads/' . $this->image);
         }
         // Fallback to placeholder
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&size=200&background=a02526&color=fff';
