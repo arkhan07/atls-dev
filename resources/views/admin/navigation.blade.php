@@ -80,9 +80,16 @@
                     <li class="sidebar-second-li {{ request()->routeIs('admin.gallery.categories') ? 'active' : '' }}">
                         <a href="{{ route('admin.gallery.categories') }}">
                             {{ get_phrase('Gallery Categories') }}
-                            @if(\App\Models\GalleryCategory::count() > 0)
-                                <span class="badge bg-success ms-1">{{ \App\Models\GalleryCategory::count() }}</span>
-                            @endif
+                            @php
+                                try {
+                                    $categoryCount = \App\Models\GalleryCategory::count();
+                                    if ($categoryCount > 0) {
+                                        echo '<span class="badge bg-success ms-1">' . $categoryCount . '</span>';
+                                    }
+                                } catch (\Exception $e) {
+                                    // Silently fail if table doesn't exist
+                                }
+                            @endphp
                         </a>
                     </li>
                 </ul>

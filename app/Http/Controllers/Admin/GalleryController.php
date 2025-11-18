@@ -297,11 +297,17 @@ class GalleryController extends Controller
     
     public function manageCategories()
     {
-        $categories = \App\Models\GalleryCategory::orderBy('sort_order', 'asc')
-            ->orderBy('name', 'asc')
-            ->paginate(20);
-        
-        return view('admin.gallery.categories', compact('categories'));
+        try {
+            $categories = \App\Models\GalleryCategory::orderBy('sort_order', 'asc')
+                ->orderBy('name', 'asc')
+                ->paginate(20);
+
+            return view('admin.gallery.categories', compact('categories'));
+        } catch (\Exception $e) {
+            // If table doesn't exist, show error message
+            return redirect()->route('admin.gallery.index')
+                ->with('error', 'Gallery Categories table belum dibuat. Silakan jalankan migration terlebih dahulu: php artisan migrate');
+        }
     }
 
     public function storeCategory(Request $request)
